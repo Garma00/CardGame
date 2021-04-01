@@ -1,0 +1,30 @@
+const express = require('express')
+var bodyParser = require('body-parser')
+const db = require('./model/db.js')
+var user_routes = require('./routes/user_routes.js')
+var user_controller = require('./controller/user_controller')
+var app = express()
+
+const port = 3000;//porta sulla quale sarà in ascolto il server
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(user_routes)
+app.use(express.static('public'))
+app.set('view engine', 'ejs');
+
+app.listen(port, function()
+{
+	console.log("App listening on --> " + port)
+	//appena viene aperto il servero ccorre connettersi al db
+	//altrimenti dovrei connettermi ogni volta che voglio fare una query
+	db.connection.connect(function(err)
+	{
+		if(err)
+			console.log("Cannot connect to db --> " + err)
+		else
+			console.log("Connected to db")
+	})
+})
+
+exports.app = app
