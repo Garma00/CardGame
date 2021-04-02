@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%=username%></title>
+	<link rel="stylesheet" type="text/css" href="cardGame.css">
+</head>
+<body>
+	<center>
+	<h1><%=username%></h1>
+	</center>
+	<h2>I tuoi deck:</h2>
+	<form action="/deck" method="post">
+		<input type="text" placeholder="nome del nuovo deck" name="deck">
+		<button id="newDeck" class="button">Nuovo</button>
+	</form>
+</body>
+</html>

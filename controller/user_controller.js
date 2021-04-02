@@ -1,7 +1,9 @@
 var express = require('express')
 var users = require('../model/user_model')
 var bcrypt = require('bcrypt')
-	
+const jwt = require('jsonwebtoken')
+var util = require('../utility.js')
+
 /*
 1. controlli sui parametri passati in modo che non siano vuoti
 2.controllo sull'username in modo che sia univoco
@@ -96,7 +98,12 @@ async function startSession(req, res)
 		{
 			var result = await comparePw(password, rows[0].password)
 			if(result)
-				res.status(200).send("you are in!")
+			{
+				//genero un JWT
+				util.generateToken(res, username)
+				//obj = {username: username}
+				res.redirect('/dashboard')
+			}
 			else
 				res.status(401).send("invalid account")
 		}
@@ -146,10 +153,21 @@ function home(req, res)
 	res.render("login.ejs", {})
 }
 
+async function dashboardPage(req, res)
+{
+	var token = await util.verifyToken(req, res)
+	console.log(req.user)
+	if(token)
+		res.render("dashboard.ejs", {username:req.user.username})
+	else
+		res.status(401).send("Sessione scaduta")
+}
+
 module.exports=
 {
 	startSession:startSession,
 	newAccount:newAccount,
 	submitPage:submitPage,
-	home:home
+	home:home,
+	dashboardPage:dashboardPage
 }

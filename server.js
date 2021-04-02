@@ -3,15 +3,31 @@ var bodyParser = require('body-parser')
 const db = require('./model/db.js')
 var user_routes = require('./routes/user_routes.js')
 var user_controller = require('./controller/user_controller')
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+var deck_routes = require('./routes/deck_routes.js')
+require('dotenv').config();
 var app = express()
 
 const port = 3000;//porta sulla quale sarà in ascolto il server
 
+//middleware
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(user_routes)
+app.use(cookieParser())
+app.use(cors())
+
 app.use(express.static('public'))
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs')
+
+//##############################################
+
+//sezione routes
+
+app.use(user_routes)
+app.use(deck_routes)
+
 
 app.listen(port, function()
 {
