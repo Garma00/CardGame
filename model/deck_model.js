@@ -14,9 +14,17 @@ async function insert(name, owner)
 	var result = db.query(q, [name, owner])
 	return result
 }
+//ritorno tutti i deck di un utente
+async function getOwnersDeck(owner)
+{
+	var q = "select * from decks where owner = ?"
+	var rows = await db.query(q, [owner])
+	return rows
+}
 
 module.exports=
 {
 	getByName:getByName,
-	insert:insert
+	insert:insert,
+	getOwnersDeck:getOwnersDeck
 }

@@ -3,15 +3,31 @@
 <head>
 	<title><%=username%></title>
 	<link rel="stylesheet" type="text/css" href="cardGame.css">
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="dashboard.js"></script>
 </head>
 <body>
 	<center>
 	<h1><%=username%></h1>
 	</center>
 	<h2>I tuoi deck:</h2>
+
+	
+	<ul id="deckList">
+		<%for (var deck in decks)
+		{
+			%>
+				<li>
+					<button name="deckName"class="button1"><%=decks[deck].name%></button>					
+				</li>
+			<%
+		}%>
+	</ul>
+	
 	<form action="/deck" method="post">
 		<input type="text" placeholder="nome del nuovo deck" name="deck">
 		<button id="newDeck" class="button">Nuovo</button>
 	</form>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 var express = require('express')
 var users = require('../model/user_model')
+var deck = require('../model/deck_model.js')
 var bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 var util = require('../utility.js')
@@ -156,18 +157,32 @@ function home(req, res)
 async function dashboardPage(req, res)
 {
 	var token = await util.verifyToken(req, res)
-	console.log(req.user)
+	console.log("get request to /dashboard from user --> " + req.user.username)
+	var decks = await getMyDecks(req)
+	var obj = 
+	{
+		username: req.user.username,
+		decks: decks
+	}
 	if(token)
-		res.render("dashboard.ejs", {username:req.user.username})
+		res.render("dashboard.ejs", obj)
 	else
 		res.status(401).send("Sessione scaduta")
 }
 
+async function getMyDecks(req)
+{
+	var owner = req.user.username
+	var decks = await deck.getOwnersDeck(owner)
+	return decks
+}
+
 module.exports=
 {
-	startSession:startSession,
-	newAccount:newAccount,
-	submitPage:submitPage,
-	home:home,
-	dashboardPage:dashboardPage
+	startSession: startSession,
+	newAccount: newAccount,
+	submitPage: submitPage,
+	home: home,
+	dashboardPage: dashboardPage
+	
 }
