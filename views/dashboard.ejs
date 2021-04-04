@@ -18,11 +18,13 @@
 		{
 			%>
 				<li>
-					<button name="deckName"class="button1"><%=decks[deck].name%></button>					
+					<button name="deckName"class="button1"><%=decks[deck].name%></button>
 				</li>
 			<%
 		}%>
 	</ul>
+
+	<h1>Inserisci un nuovo deck</h1>
 	
 	<form action="/deck" method="post">
 		<input type="text" placeholder="nome del nuovo deck" name="deck">

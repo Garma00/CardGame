@@ -1,5 +1,19 @@
 var db = require('./db.js')
 
+async function getByNameAndOwner(name, owner)
+{
+	var q = "select * from decks where name = ? and owner = ?"
+	var rows = await db.query(q, [name, owner])
+	return rows
+}
+
+async function del(name, owner)
+{
+	var q = "delete from decks where name = ? and owner = ?"
+	var result = await db.query(q, [name, owner])
+	return result
+}
+
 //ritorno il deck con il nome passato come parametro
 async function getByName(name)
 {
@@ -26,5 +40,7 @@ module.exports=
 {
 	getByName:getByName,
 	insert:insert,
-	getOwnersDeck:getOwnersDeck
+	getOwnersDeck:getOwnersDeck,
+	del:del,
+	getByNameAndOwner:getByNameAndOwner
 }

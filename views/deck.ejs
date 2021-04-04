@@ -8,12 +8,12 @@
 </head>
 <body>
 	<h1 id="deckId"><%=deck%></h1>
-	<ul>
+	<ul id="cardList">
 	<%for (var card in cards)
 		{
 			%>
 				<li>
-					<p><%=cards[card].name%> x <%=cards[card].copies%></p>					
+					<p><%=cards[card].name%> x <%=cards[card].copies%></p>
 				</li>
 			<%
 		}%>
@@ -25,9 +25,10 @@
 	<h3><%=effectMonsters%>x mostri con effetto</h3>
 	<h3><%=tunerMonsters%>x mostri tuner</h3>
 	<h3><%=synchroMonsters%>x mostri synchro</h3>
+	<button class="button2" id="delete">Elimina mazzo</button>
 	<h1>ricerca una carta</h1>
 	<span id="preview"></span><span id="buttonsSpan"></span><br>
 	<input type="text" placeholder="nome della carta" id="cardName">
-	<button id="find" class="button">find</button>
+	<button id="find" class="button1">find</button>
 </body>
 </html>

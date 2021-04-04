@@ -82,7 +82,9 @@ async function hashPassword(password)
 /*
 1.controllo che i due campi del form non siano vuoti
 2.controllo che username e password siano corretti
-3.se va tutto bene ritorno il token*/
+3.se va tutto bene ritorno il token
+*/
+
 async function startSession(req, res)
 {
 	var username = req.body.username
@@ -165,7 +167,7 @@ async function dashboardPage(req, res)
 		decks: decks
 	}
 	if(token)
-		res.render("dashboard.ejs", obj)
+		res.status(200).render("dashboard.ejs", obj)
 	else
 		res.status(401).send("Sessione scaduta")
 }
@@ -184,5 +186,4 @@ module.exports=
 	submitPage: submitPage,
 	home: home,
 	dashboardPage: dashboardPage
-	
 }

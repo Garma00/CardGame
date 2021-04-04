@@ -55,31 +55,28 @@ async function showDeck(req, res)
 	var username = req.user.username
 	console.log(username)
 	console.log(req.query)
+	//con delle query ottengo delle informazioni da mostrare del model
 	var rows = await cards.getFromDeck(deckName, username)
 	var size = await cards.getDeckLength(deckName, username)
-	var spells = await cards.getSizeByType(deckName, username, "spell card")
-	var traps = await cards.getSizeByType(deckName, username, "Trap Card")
-	var normalMonsters = await cards.getSizeByType(deckName, username, "normal monster")
-	var effectMonsters = await cards.getSizeByType(deckName, username, "effect monster")
-	var synchroMonsters = await cards.getSizeByType(deckName, username, "synchro monster")
-	var tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster")
+
 	var obj =
 	{
 		username: req.user.username,
 		deck:deckName,
 		cards: rows,
 		size:size,
-		spells:spells,
-		traps:traps,
-		normalMonsters:normalMonsters,
-		effectMonsters:effectMonsters,
-		synchroMonsters:synchroMonsters,
-		tunerMonsters:tunerMonsters
+		spells:await cards.getSizeByType(deckName, username, "spell card"),
+		traps:await cards.getSizeByType(deckName, username, "Trap Card"),
+		normalMonsters:await cards.getSizeByType(deckName, username, "normal monster"),
+		effectMonsters:await cards.getSizeByType(deckName, username, "effect monster"),
+		synchroMonsters: await cards.getSizeByType(deckName, username, "synchro monster"),
+		tunerMonsters:await cards.getSizeByType(deckName, username, "tuner monster")
 
 	}
 	res.render('deck.ejs', obj)
 
 }
+
 //chiamata quando viene effettuata una put
 async function modifyDeck(req, res)
 {
@@ -98,8 +95,9 @@ async function modifyDeck(req, res)
 			console.log("try to add card")
 			await addCard(req, res)
 			break;
-		default:
-			console.log("default")
+		case 1:
+			console.log("try to remove card")
+			await removeCard(req, res)
 			break;
 	}
 
@@ -142,7 +140,70 @@ async function addCard(req, res)
 		var result = await cards.newCard(toInsert, deck, username)
 		console.log("new card " + toInsert.name + " insert into " + deck)
 		return true
-	} 
+	}
+	
+}
+
+/*
+1. controllo se nel mazzo è presente quella carta
+2. se è presente controllo se copies > 1
+*/
+async function removeCard(req, res)
+{
+	var toInsert = req.body.card
+	var deck = req.body.deck
+	var username = req.user.username
+
+	var rows = await cards.getCardFromDeck(toInsert.name, deck, username)
+	if(!rows)
+	{
+		console.log("cant remove this card") 
+		return false
+	}
+		
+	var copies = rows[0].copies
+	if(copies > 1)
+		cards.removeCopy(toInsert.name, deck, username)
+	else
+		cards.removeCard(toInsert.name, deck, username)
+	
+	return true
+}
+
+/*
+1. se l'utente è connesso
+2. controllo se l'utente possiede il mazzo che vuole eliminare
+*/
+
+async function deleteDeck(req, res)
+{	
+	var token = await util.verifyToken(req, res)
+	if(!token)
+	{
+		res.status(401).send("invalid account")
+		return false;
+	}
+	
+	var toDelete = req.body.deck
+	var username = req.user.username
+
+	//rimuovo le carte dalla lista
+	if(deck.getByNameAndOwner(toDelete, username))
+	{
+		await cards.deleteDeck(toDelete, username)
+		await deck.del(toDelete, username)
+		res.redirect("/dashboard")
+		return true
+	}
+	else
+	{
+		console.log(username + " has not " + toDelete + " deck")
+		res.redirect("/dashboard")
+		return true
+	}
+	
+	
+
 }
 
 /*
@@ -185,5 +246,6 @@ module.exports=
 	alreadyHave:alreadyHave,
 	findCardByName:findCardByName,
 	showDeck: showDeck,
-	modifyDeck:modifyDeck
+	modifyDeck:modifyDeck,
+	deleteDeck:deleteDeck
 }
