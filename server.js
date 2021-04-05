@@ -6,6 +6,7 @@ var user_controller = require('./controller/user_controller')
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 var deck_routes = require('./routes/deck_routes.js')
+var battle_routes = require('./routes/battle_routes.js')
 require('dotenv').config();
 var app = express()
 
@@ -27,6 +28,7 @@ app.set('view engine', 'ejs')
 
 app.use(user_routes)
 app.use(deck_routes)
+app.use(battle_routes)
 
 
 app.listen(port, function()

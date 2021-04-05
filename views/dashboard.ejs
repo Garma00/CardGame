@@ -24,6 +24,13 @@
 		}%>
 	</ul>
 
+	<h2>Entra in una partita</h2>
+	<form action="/battle" method="get">
+		<input type="text" placeholder="Inserisci l'id della partita" name="id">
+		<button id="joinGame" class="button">entra</button>
+	</form>
+	<h2>crea una nuova partita</h2>
+	<form action="/battle" method="post"><button id="createGame" class="button">nuova partita</button></form>
 	<h1>Inserisci un nuovo deck</h1>
 	
 	<form action="/deck" method="post">
