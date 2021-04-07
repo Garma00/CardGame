@@ -1,6 +1,7 @@
 var express = require('express')
 var users = require('../model/user_model')
 var deck = require('../model/deck_model.js')
+var battle = require('../model/battle_model.js')
 var bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 var util = require('../utility.js')
@@ -161,10 +162,12 @@ async function dashboardPage(req, res)
 	var token = await util.verifyToken(req, res)
 	console.log("get request to /dashboard from user --> " + req.user.username)
 	var decks = await getMyDecks(req)
+	var games = await getGames(req.user.username)
 	var obj = 
 	{
 		username: req.user.username,
-		decks: decks
+		decks: decks,
+		games: games
 	}
 	if(token)
 		res.status(200).render("dashboard.ejs", obj)
@@ -177,6 +180,14 @@ async function getMyDecks(req)
 	var owner = req.user.username
 	var decks = await deck.getOwnersDeck(owner)
 	return decks
+}
+
+//ritorno i game dell'utente che sono già terminati
+async function getGames(user)
+{
+	console.log("getting " + user + "'s games")
+	var rows = await battle.getEndedGames(user)
+	return rows
 }
 
 module.exports=

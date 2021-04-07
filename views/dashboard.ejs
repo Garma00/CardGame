@@ -2,41 +2,84 @@
 <html>
 <head>
 	<title><%=username%></title>
-	<link rel="stylesheet" type="text/css" href="cardGame.css">
+	 <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="materialize.min.css"  media="screen,projection"/>
+      <link rel="stylesheet" type="text/css" href="cardGame.css">
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" src="dashboard.js"></script>
+
 </head>
-<body>
-	<center>
-	<h1><%=username%></h1>
-	</center>
-	<h2>I tuoi deck:</h2>
+<div class="container">
+<body class="blue-grey darken-4">
+	<div class="blue-grey darken-2 z-depth-4 row">
+		<center>
+			<h1><%=username%></h1>
+		</center>
+	</div>
 
+
+	<div class="row blue-grey darken-2 z-depth-4">
+		<center>
+			<h2>I tuoi deck</h2>	
+		
+			<ul id="deckList">
+				<%for (var deck in decks)
+				{
+					%>
+						<li>
+							<button name="deckName" class="sameSize waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4"><%=decks[deck].name%></button>
+						</li>
+					<%
+				}%>
+			</ul>
+			<h2>Nuovo deck</h2>	
+			<form action="/deck" method="post">
+				
+					<input type="text" placeholder="nome del nuovo deck" class="input-field col s6 offset-s2" name="deck">
+				
+					<button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
+			</form>
+		</center>
+	</div>
+	<div class="row blue-grey darken-2 z-depth-4">
+		<center>
+			<h2>Ultime partite</h2>
+			<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1">
+				<tr>
+					<th class="deep-orange darken-4">host</th>
+					<th class="deep-orange darken-4">guest</th>
+					<th class="deep-orange darken-4">lp host</th>
+					<th class="deep-orange darken-4">lp Guest</th>
+					<th class="deep-orange darken-4">winner</th>
+				</tr>
+					<%for (var game in games)
+					{
+						%>
+							<tr>
+								<th><%=games[game].host%></th>
+								<th><%=games[game].guest%></th>
+								<th><%=games[game].lpHost%></th>
+								<th><%=games[game].lpGuest%></th>
+								<th><%=games[game].winner%></th>
+							</tr>
+						<%
+					}%>
+				
+			</table>
+			<h2>Entra in una partita</h2>
+			<form action="/battle" method="get">
+				<input type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
+				
+				<button id="joinGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">entra</button>
+			</form>
+			<form action="/battle" method="post"><button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button></form>
+		</center>
+	</div>
 	
-	<ul id="deckList">
-		<%for (var deck in decks)
-		{
-			%>
-				<li>
-					<button name="deckName"class="button1"><%=decks[deck].name%></button>
-				</li>
-			<%
-		}%>
-	</ul>
-
-	<h2>Entra in una partita</h2>
-	<form action="/battle" method="get">
-		<input type="text" placeholder="Inserisci l'id della partita" name="id">
-		<button id="joinGame" class="button">entra</button>
-	</form>
-	<h2>crea una nuova partita</h2>
-	<form action="/battle" method="post"><button id="createGame" class="button">nuova partita</button></form>
-	<h1>Inserisci un nuovo deck</h1>
-	
-	<form action="/deck" method="post">
-		<input type="text" placeholder="nome del nuovo deck" name="deck">
-		<button id="newDeck" class="button">Nuovo</button>
-	</form>
-
+</div>
 </body>
 </html>

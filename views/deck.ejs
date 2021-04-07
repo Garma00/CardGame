@@ -2,33 +2,88 @@
 <html>
 <head>
 	<title><%=username%></title>
-	<link rel="stylesheet" type="text/css" href="cardGame.css">
+	<!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="materialize.min.css"  media="screen,projection"/>
+      <link rel="stylesheet" type="text/css" href="cardGame.css">
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" src="deck.js"></script>
 </head>
-<body>
-	<h1 id="deckId"><%=deck%></h1>
-	<ul id="cardList">
-	<%for (var card in cards)
-		{
-			%>
-				<li>
-					<p><%=cards[card].name%> x <%=cards[card].copies%></p>
-				</li>
-			<%
-		}%>
-	</ul>
-	<h3> totale carte: <%=size%></h3>
-	<h3><%=spells%>x magie</h3>
-	<h3><%=traps%>x trappole</h3>
-	<h3><%=normalMonsters%>x mostri normali</h3>
-	<h3><%=effectMonsters%>x mostri con effetto</h3>
-	<h3><%=tunerMonsters%>x mostri tuner</h3>
-	<h3><%=synchroMonsters%>x mostri synchro</h3>
-	<button class="button2" id="delete">Elimina mazzo</button>
-	<h1>ricerca una carta</h1>
-	<span id="preview"></span><span id="buttonsSpan"></span><br>
-	<input type="text" placeholder="nome della carta" id="cardName">
-	<button id="find" class="button1">find</button>
+<body class="blue-grey darken-4">
+<div class="container">
+	<div class="row blue-grey darken-2">
+		<center>
+			<h1 id="deckId"><%=deck%></h1>
+			<table id="centered blue-grey darken-3 z-depth-4 col s10 offset-s1 cardList">
+			<tr>
+				<th class="deep-orange darken-4">nome</th>
+				<th class="deep-orange darken-4">atk</th>
+				<th class="deep-orange darken-4">def</th>
+				<th class="deep-orange darken-4">lv</th>
+				<th class="deep-orange darken-4">tipo</th>
+				<th class="deep-orange darken-4">copie</th>
+			</tr>
+			<%for (var card in cards)
+				{%>
+						<tr>
+							<th><%=cards[card].name%></th>
+							<th><%=cards[card].atk%></th>
+							<th><%=cards[card].def%></th>
+							<th><%=cards[card].level%></th>
+							<th><%=cards[card].type%></th>
+							<th>x<%=cards[card].copies%></th>
+						</tr>
+					<%
+				}%>
+			</table>
+		</center>
+	</div>
+	<div class="row blue-grey darken-2">
+		<center>
+			<h3>totale carte: <%=size%></h3>
+			<div class="row">
+				<table>
+					<tr>
+						<th class="deep-orange darken-4">magie</th>
+						<th class="deep-orange darken-4">trappole</th>
+						<th class="deep-orange darken-4">normali</th>
+						<th class="deep-orange darken-4">mostri effetto</th>
+						<th class="deep-orange darken-4">mostri tuner</th>
+						<th class="deep-orange darken-4">extra deck</th>
+					</tr>
+					<tr>
+						<th><%=spells%></th>
+						<th><%=traps%></th>
+						<th><%=normalMonsters%></th>
+						<th><%=effectMonsters%></th>
+						<th><%=tunerMonsters%></p>
+						<th><%=synchroMonsters%></p>
+					</tr>
+				</table>
+				<button class="waves-effect waves-light deep-orange darken-4 btn z-depth-4" id="delete">Elimina mazzo</button>
+
+			</div>
+		</center>
+	</div>
+	<div class="row blue-grey darken-2">
+		<center>
+			<h1 class="flow-text">ricerca una carta</h1>
+			<div id="preview" class="col s4"></div>
+			<div class="col s5 offset-s1">
+				<input type="text" class="input-field" placeholder="nome della carta" id="cardName">
+			<button id="find" class="flow-text waves-effect waves-light deep-orange lighten-1 btn z-depth-4">trova</button>
+			</div>
+			<span id="buttonsSpan" class="col s6"></span>		
+		
+	</div>
+	<div class="row blue-grey darken-2">
+		<center>
+			
+		</center>
+	</div>
+</div>
 </body>
 </html>

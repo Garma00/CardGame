@@ -1,87 +1,41 @@
-body
+h1, h2, h3, h4, h5
 {
-	background-color: #2b2625;
+  color: #ffffff;
 }
 
-input
+p
 {
-	padding: 20px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-right: 5px;
-	margin-left: 5px;
+  color: #ffffff;
 }
 
-.button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  border: solid;
-  border-color: black;
-  padding: 10px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
-
-.button1 {
-  background-color: #eb761c; 
-  border: none;
-  color: white;
-  border: solid;
-  border-color: black;
-  padding: 10px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
-.button2 {
-  background-color: #872a29;
-  border: solid;
-  border-color: black;
-  color: white;
-  padding: 10px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
-
-h3
+button
 {
-	color: #ffffff;
+  margin-top: 10px;
 }
 
 ul
 {
-  columns: 2;
-  -webkit-columns: 2;
-  -moz-columns: 2;
-  margin-right: 10px;
+  column-count: 3;
 }
 
-li
+input
 {
   color: #ffffff;
-  margin-right:10px;
 }
 
-a
+th
 {
-	color: #ffffff
-}
-
-h1, h2, title
-{
-	color: #ed7011;
-
+  color: #ffffff;
 }
 
 img
 {
-  width:25%;
-  height: 25%;
-  padding: 10px;
+  width: 80%;
+  height: 80%;
+}
+
+.sameSize
+{
+  width: 90%;
+  table-layout: fixed;
 }

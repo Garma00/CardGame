@@ -26,7 +26,6 @@ async function verifyToken(req, res)
         {
             username: decrypt.username
         }
-        console.log("dentro la verify " + req.user.username)
         return true
     }
     return false
