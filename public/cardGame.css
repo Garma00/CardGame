@@ -15,7 +15,7 @@ button
 
 ul
 {
-  column-count: 3;
+  column-count: 1;
 }
 
 input
@@ -32,6 +32,12 @@ img
 {
   width: 80%;
   height: 80%;
+}
+
+.canvas
+{
+  width: 50%;
+  height: 50%;
 }
 
 .sameSize

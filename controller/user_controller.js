@@ -157,17 +157,45 @@ function home(req, res)
 	res.render("login.ejs", {})
 }
 
+//per orgni deck ritorna il numero di volte che è stato utilizzato
+async function deckUsed(user)
+{
+	var decks = await deck.getOwnersDeck(user)
+	console.log(decks)
+	var used = []
+
+	if(!decks)
+		return false
+	
+	for(i = 0; i < decks.length; i++)
+	{
+		used[i] = await battle.getByDeckUsed(decks[i].name, user)
+	}
+
+	return used
+}
+
 async function dashboardPage(req, res)
 {
 	var token = await util.verifyToken(req, res)
 	console.log("get request to /dashboard from user --> " + req.user.username)
 	var decks = await getMyDecks(req)
 	var games = await getGames(req.user.username)
+	var win = await battle.getWin(req.user.username)
+	var lose = await battle.getLose(req.user.username)
+	var used = await deckUsed(req.user.username)
+
+
+	console.log(used)
+	
 	var obj = 
 	{
 		username: req.user.username,
 		decks: decks,
-		games: games
+		games: games,
+		win: win,
+		lose: lose,
+		used: used
 	}
 	if(token)
 		res.status(200).render("dashboard.ejs", obj)
@@ -189,6 +217,8 @@ async function getGames(user)
 	var rows = await battle.getEndedGames(user)
 	return rows
 }
+
+
 
 module.exports=
 {

@@ -42,5 +42,6 @@ module.exports=
 	insert:insert,
 	getOwnersDeck:getOwnersDeck,
 	del:del,
-	getByNameAndOwner:getByNameAndOwner
+	getByNameAndOwner:getByNameAndOwner,
+	
 }

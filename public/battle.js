@@ -5,13 +5,20 @@ window.onload = function()
 	var divide = document.getElementById("divide")
 	var d6 = document.getElementById("d6")
 	var close = document.getElementById("close")
+	var selectDeck = document.getElementById("selectDeck")
+	var decks = document.getElementsByName("deckName")
 
-	heal.addEventListener("click", function(){updateLp(0)})
-	hit.addEventListener("click", function(){updateLp(1)})
-	divide.addEventListener("click", function(){updateLp(2)})
+	heal.addEventListener("click", function(){updateMatch(0)})
+	hit.addEventListener("click", function(){updateMatch(1)})
+	divide.addEventListener("click", function(){updateMatch(2)})
 	close.addEventListener("click", closeMatch)
 	d6.addEventListener("click", randomNumber)
+
+	for(i = 0; i < decks.length; i++)
+		decks[i].addEventListener("click", function(){updateMatch(3, this)})
 }
+
+
 
 function randomNumber()
 {
@@ -24,11 +31,13 @@ function randomNumber()
 1. hit
 2. divide
 */
-function updateLp(type)
+function updateMatch(type, deckName)
 {
 	var amount = document.getElementById("amount").value
 	var id = document.getElementById("id").innerHTML
-
+	if(deckName)
+		var deck = deckName.innerHTML
+	console.log(deck)
 	$.ajax(
 	{
 		url: '/battle',
@@ -37,6 +46,7 @@ function updateLp(type)
 		{
 			amount: amount,
 			id: id,
+			deck: deck,
 			type: type
 		},
 		//potrei in caso di successo aggiornare la pagina

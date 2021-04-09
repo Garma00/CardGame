@@ -11,13 +11,20 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" src="deck.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="blue-grey darken-4">
 <div class="container">
-	<div class="row blue-grey darken-2">
+	<h5 id="win" class="blue-grey darken-3 col s6 hide"><%=win%></h5>
+			<h5 id="lose" class="blue-grey darken-2 col s6 hide"><%=lose%></h5>
+	<div class="row blue-grey darken-3">
 		<center>
 			<h1 id="deckId"><%=deck%></h1>
-			<table id="centered blue-grey darken-3 z-depth-4 col s10 offset-s1 cardList">
+			
+		</center>
+	</div>
+
+	<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1 cardList">
 			<tr>
 				<th class="deep-orange darken-4">nome</th>
 				<th class="deep-orange darken-4">atk</th>
@@ -38,14 +45,20 @@
 						</tr>
 					<%
 				}%>
-			</table>
-		</center>
+			</table><br>
+	
+	<div class="row">
+		<div class="card-content blue-grey darken-3 col s5">
+			<span class="card-title white-text">Componenti</span>
+			<canvas id="deckCards" width="100" height="100"></canvas>
+		</div>
+		<div class="card-content blue-grey darken-3 col s5 offset-s2">
+			<span class="card-title white-text">Winrate</span>
+			<canvas id="winRate" width="100" height="100"></canvas>
+		</div>
 	</div>
-	<div class="row blue-grey darken-2">
-		<center>
-			<h3>totale carte: <%=size%></h3>
 			<div class="row">
-				<table>
+				<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1 cardList">
 					<tr>
 						<th class="deep-orange darken-4">magie</th>
 						<th class="deep-orange darken-4">trappole</th>
@@ -53,22 +66,26 @@
 						<th class="deep-orange darken-4">mostri effetto</th>
 						<th class="deep-orange darken-4">mostri tuner</th>
 						<th class="deep-orange darken-4">extra deck</th>
+						<th class="deep-orange darken-4">totale</th>
 					</tr>
 					<tr>
-						<th><%=spells%></th>
-						<th><%=traps%></th>
-						<th><%=normalMonsters%></th>
-						<th><%=effectMonsters%></th>
-						<th><%=tunerMonsters%></p>
-						<th><%=synchroMonsters%></p>
+						<th id="spells"><%=spells%></th>
+						<th id="traps"><%=traps%></th>
+						<th id="normalMonsters"><%=normalMonsters%></th>
+						<th id="effectMonsters"><%=effectMonsters%></th>
+						<th id="tunerMonsters"><%=tunerMonsters%></th>
+						<th id="extra"><%=synchroMonsters%></th>
+						<th id="totalMonsters"><%=totalCards%></th>
+						
 					</tr>
 				</table>
-				<button class="waves-effect waves-light deep-orange darken-4 btn z-depth-4" id="delete">Elimina mazzo</button>
-
+				<center>
+					<button class="waves-effect waves-light deep-orange darken-4 btn z-depth-4" id="delete">Elimina mazzo</button>
+				</center>
 			</div>
 		</center>
 	</div>
-	<div class="row blue-grey darken-2">
+	<div class="row blue-grey darken-3">
 		<center>
 			<h1 class="flow-text">ricerca una carta</h1>
 			<div id="preview" class="col s4"></div>
@@ -79,11 +96,7 @@
 			<span id="buttonsSpan" class="col s6"></span>		
 		
 	</div>
-	<div class="row blue-grey darken-2">
-		<center>
-			
-		</center>
-	</div>
+
 </div>
 </body>
 </html>

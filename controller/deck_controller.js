@@ -3,6 +3,7 @@ const axios = require('axios').default;
 var util = require('../utility.js')
 var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
+var battle = require('../model/battle_model.js')
 
 async function newDeck(req, res)
 {
@@ -59,18 +60,31 @@ async function showDeck(req, res)
 	var rows = await cards.getFromDeck(deckName, username)
 	var size = await cards.getDeckLength(deckName, username)
 
+		spells = await cards.getSizeByType(deckName, username, "spell card"),
+		traps = await cards.getSizeByType(deckName, username, "Trap Card"),
+		normalMonsters = await cards.getSizeByType(deckName, username, "normal monster"),
+		effectMonsters = await cards.getSizeByType(deckName, username, "effect monster"),
+		synchroMonsters =  await cards.getSizeByType(deckName, username, "synchro monster"),
+		tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster"),
+		totalCards =  normalMonsters + effectMonsters + synchroMonsters + tunerMonsters + spells + traps
+		win =  await battle.getWinWithDeck(deckName, username),
+		lose =  await battle.getLoseWithDeck(deckName, username)
+
 	var obj =
 	{
 		username: req.user.username,
 		deck:deckName,
 		cards: rows,
-		size:size,
-		spells:await cards.getSizeByType(deckName, username, "spell card"),
-		traps:await cards.getSizeByType(deckName, username, "Trap Card"),
-		normalMonsters:await cards.getSizeByType(deckName, username, "normal monster"),
-		effectMonsters:await cards.getSizeByType(deckName, username, "effect monster"),
-		synchroMonsters: await cards.getSizeByType(deckName, username, "synchro monster"),
-		tunerMonsters:await cards.getSizeByType(deckName, username, "tuner monster")
+		size: size,
+		spells: spells,
+		traps: traps,
+		normalMonsters: normalMonsters,
+		effectMonsters: effectMonsters,
+		synchroMonsters: synchroMonsters,
+		tunerMonsters: tunerMonsters,
+		totalCards: totalCards,
+		win: win,
+		lose: lose
 
 	}
 	res.render('deck.ejs', obj)

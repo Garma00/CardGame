@@ -11,19 +11,23 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" src="dashboard.js"></script>
-
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <div class="container">
 <body class="blue-grey darken-4">
-	<div class="blue-grey darken-2 z-depth-4 row">
-		<center>
-			<h1><%=username%></h1>
-		</center>
-	</div>
-
-
-	<div class="row blue-grey darken-2 z-depth-4">
-		<center>
+	<div class="row">
+		<div class="card-content blue-grey darken-3 col s5 ">
+			<center>
+			<h1 class="flow-Text"><%=username%></h1>	
+			<form action="/deck" method="post">
+				
+					<input type="text" placeholder="nome del nuovo deck" class="input-field" name="deck">
+				
+					<button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
+			</form>	
+			</center>	
+		</div>
+		<div class="card-content blue-grey darken-3 col s6 offset-s1">
 			<h2>I tuoi deck</h2>	
 		
 			<ul id="deckList">
@@ -31,21 +35,15 @@
 				{
 					%>
 						<li>
-							<button name="deckName" class="sameSize waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4"><%=decks[deck].name%></button>
+							<button name="deckName" class="sameSize mazzo waves-effect waves-light deep-orange lighten-1 z-depth-4 btn"><%=decks[deck].name%></button>
 						</li>
 					<%
 				}%>
 			</ul>
-			<h2>Nuovo deck</h2>	
-			<form action="/deck" method="post">
-				
-					<input type="text" placeholder="nome del nuovo deck" class="input-field col s6 offset-s2" name="deck">
-				
-					<button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
-			</form>
-		</center>
+		</div>
 	</div>
-	<div class="row blue-grey darken-2 z-depth-4">
+
+	<div class="row blue-grey darken-3 z-depth-4">
 		<center>
 			<h2>Ultime partite</h2>
 			<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1">
@@ -79,6 +77,28 @@
 			<form action="/battle" method="post"><button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button></form>
 		</center>
 	</div>
+		<h4 class="flow-text hide col s1" id="win"><%=win%></h4>
+		<h4 class="flow-text hide col s1" id="lose"><%=lose%></h4>
+
+	<div class="row">
+		<div class="card-content blue-grey darken-3 col s5">
+			<span class="title-card white-text">Winrate</span>
+			<canvas id="winRate" width="100" height="100" class=""></canvas>
+		</div>
+		<div class="card-content blue-grey darken-3 col s5 offset-s2">
+			<span class="title-card white-text">Utilizzo mazzi</span>
+			<canvas id="used" width="100" height="100" class=""></canvas>
+		</div>
+	</div>
+		
+	</div>
+
+	<%for (count in used)
+	{
+		%>
+			<h1 class="counter hide"><%=used[count]%></h1>
+		<%
+	}%>
 	
 </div>
 </body>
