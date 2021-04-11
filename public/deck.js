@@ -1,151 +1,37 @@
+import * as util from './utility.js'
+
 window.onload = function()
 {
 	var find = document.getElementById("find")
 	var del = document.getElementById("delete")
+
+	var winVsLose = []
+	winVsLose[0] = document.getElementById("win").innerHTML
+	winVsLose[1] = document.getElementById("lose").innerHTML
+	
+	var ctx0 = document.getElementById('deckCards')
+	var ctx1 = document.getElementById('winRate')
 	find.addEventListener("click", search)
 	del.addEventListener("click", deleteDeck)
 
 	var normalMonsters = parseInt(document.getElementById("normalMonsters").innerHTML)
-	var tuner = parseInt(document.getElementById("tunerMonsters").innerHTML)
-	var effect = parseInt(document.getElementById("effectMonsters").innerHTML)
+	var tunerMonsters = parseInt(document.getElementById("tunerMonsters").innerHTML)
+	var effectMonsters = parseInt(document.getElementById("effectMonsters").innerHTML)
+	
+	var cardType = []
+	cardType[0] = document.getElementById("extra").innerHTML
+	cardType[1] = document.getElementById("spells").innerHTML
+	cardType[2] = document.getElementById("traps").innerHTML
+	cardType[3] = normalMonsters + tunerMonsters + effectMonsters
 
-	var win = document.getElementById("win").innerHTML
-	var lose = document.getElementById("lose").innerHTML
-
-	var totMonsters = normalMonsters + tuner + effect
-	var extra = document.getElementById("extra").innerHTML
-	var spells = document.getElementById("spells").innerHTML
-	var traps = document.getElementById("traps").innerHTML
-	var ctx0 = document.getElementById('deckCards')
-	var ctx1 = document.getElementById('winRate')
-	var deckCards = new Chart(ctx0, {
-    type: 'doughnut',
-    data: {
-        labels: ['magie', 'mostri', 'trappole', 'extra'],
-        datasets: [{
-            data: [spells, totMonsters, traps, extra],
-            color: '#FFFFFF',
-            backgroundColor: [
-                'rgba(89, 232, 32, 0.5)',
-                'rgba(232, 116, 32, 0.5)',
-                'rgba(159, 32, 232, 0.5)',
-                'rgba(255, 255, 255, 0.5)'
-
-            ],
-            borderColor: [
-                '#212121',
-                '#212121',
-                '#212121',
-                '#212121'
-            ],
-            
-            borderWidth: 2
-            
-        }]
-
-    },
-    options: {
-    	plugins:
-    	{
-    		legend:
-    		{
-    			display:false
-    		}
-    	},
-    	color: '#ffffff',
-        scales: {
-            y:
-            {
-                beginAtZero: true,
-            	ticks:
-	            {
-	            	display: false
-	            },
-	            grid:
-            	{
-            		display: false
-            	},
-	        },
-            
-            x:
-            {
-            	grid:
-            	{
-            		display: false
-            	},
-
-				ticks:
-	            {
-	            	display: false
-	            }
-            }
-        }
-    },
-
-})
-
-var deckCards = new Chart(ctx1, {
-    type: 'doughnut',
-    data: {
-        labels: ['vittorie', 'sconfitte'],
-        datasets: [{
-            data: [win, lose],
-            color: '#FFFFFF',
-            backgroundColor: [
-                'rgba(86, 235, 52, 0.5)',
-                'rgba(235, 82, 52, 0.5)'
-
-            ],
-            borderColor: [
-                'rgba(52, 235, 119, 1)',
-                'rgba(235, 64, 52, 1)'
-            ],
-            
-            borderWidth: 2
-            
-        }]
-
-    },
-    options: {
-    	plugins:
-    	{
-    		legend:
-    		{	
-    			display: false
-    		}
-    	},
-    	color: '#ffffff',
-        scales: {
-        	
-            y:
-            {
-                beginAtZero: true,
-            	ticks:
-	            {
-	            	display: false
-	            },
-	            grid:
-            	{
-            		display: false
-            	},
-	        },
-            
-            x:
-            {
-            	grid:
-            	{
-            		display: false
-            	},
-
-				ticks:
-	            {
-	            	display: false
-	            }
-            }
-            
-        }
-    }
-})
+	var labels = []
+	labels[0] = "extra deck"
+	labels[1] = "magie"
+	labels[2] = "trappole"
+	labels[3] = "mostri"
+	
+	var deckCards = new Chart(ctx0, util.createChart("doughnut", labels, cardType))
+	var winRate = new Chart(ctx1, util.createChart("doughnut", ['vittorie', 'sconfitte'], winVsLose))
 
 }
 
@@ -250,6 +136,9 @@ function updateDeck(result, deck, type)
 			type:type
 		},
 		success: function success(result){console.log(result)},
+
+		//in caso di errore comunicare all'utente perchè non può aggiungere la carta
+
 		error: function error(){console.log("insert card error")}
 	})
 

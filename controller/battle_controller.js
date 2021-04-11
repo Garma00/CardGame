@@ -17,25 +17,20 @@ async function joinBattle(req, res)
 		return false;
 	}
 	//query al db per settare alcune info della battaglia
-	console.log("trying to join in battle --> " + req.query.id)
+	console.log(req.user.username + " is trying to join in battle --> " + req.query.id)
 	var rows = await battle.getById(req.query.id)
-	console.log(rows)
 
-	//se la partita non è più in corso non puoi entrare
+	//se la partita non è più in corso non è possibile intrare
 	if(rows[0].inCourse == 0)
 	{
 		res.status(401).send("partita non più in corso")
 		return false
 	}
+	//ottengo i vari deck dell'utente che vuole entrare nella partita
 	if(rows[0].host == req.user.username)
 		var decksHost = await deck.getOwnersDeck(req.user.username)
 	else if(rows[0].guest == req.user.username)
 		var decksGuest = await deck.getOwnersDeck(req.user.username)
-
-	console.log("host decks:")
-	console.log(decksHost)
-	console.log("guest decks")
-	console.log(decksGuest)
 
 	// posso entrare solamente se sono l'host o sono il guest
 	if(rows[0].host == req.user.username || rows[0].guest == req.user.username)
@@ -56,7 +51,7 @@ async function joinBattle(req, res)
 		return true
 	}
 	//se il guest è null posso comunque entrare ma prima devo settarlo ad user
-	if(rows[0].guest == "waiting")
+	else if(rows[0].guest == "waiting")
 	{
 		console.log(req.user.username + " joining in battle " + req.query.id)
 		var result = await battle.joinGuest(req.user.username, req.query.id)
@@ -75,13 +70,11 @@ async function joinBattle(req, res)
 		res.render("battle.ejs", obj)		
 		return true
 	}
-	return false
+	//la partita è già piena, l'utente non può entrare
+	else
+		return false
 }
 
-/*
-1.controllo se l'utente è loggato
-2.creo la battaglia
-*/
 async function createBattle(req, res)
 {
 	var token = await util.verifyToken(req, res)
@@ -90,21 +83,20 @@ async function createBattle(req, res)
 		res.status(401).send("invalid account")
 		return false;
 	}
-	//l'host entra in partita senza obbligo di selezionare il mazzo
+
+	//l'host entra in partita senza dover selezionare il mazzo
 	var result = await battle.newBattle(req.user.username)
 	if(result)
-		res.redirect('/battle?id=' + result.insertId)
+		res.redirect('/match?id=' + result.insertId)
 	else
 		return false
 	console.log("joining in battle --> " + result.insertId)
 	return true
-
 }
-/*
-1. controllo se l'utente è loggato
-2. controllo se l'utente è l'host o il guest
-3. aggiorno gli lp dell'utente
 
+/*
+posso aggiungere togliere o dividere gli lp
+posso anche selezionare un mazzo per un utente
 */
 async function updateBattle(req, res)
 {
@@ -116,10 +108,18 @@ async function updateBattle(req, res)
 	}
 	console.log("battle id --> " + req.body.id)
 	var rows = await battle.getById(req.body.id)
+
+	//mi serve verificare s el'utente è host o guest
 	if(req.user.username == rows[0].host)
-		var toUpdate = "host"
+	{
+		var toUpdate = "deckHost"
+		var lp = "lpHost"
+	}
 	else if(req.user.username == rows[0].guest)
-		var toUpdate = "guest"
+	{
+		var toUpdate = "deckGuest"
+		var lp = "lpGuest"
+	}
 	else
 	{
 		res.status(401).send("error")
@@ -130,38 +130,42 @@ async function updateBattle(req, res)
 	var amount = parseInt(req.body.amount)
 	var id = req.body.id
 
+	//in base al tipo di richiesta so cosa devo modificare
 	switch(type)
 	{
 		case 0:
-			if(toUpdate == "host")
-				var result = await battle.healHost(amount, id)
-			else if(toUpdate == "guest")
-				var result = await battle.healGuest(amount, id)			
-			return true
+			var result = await battle.heal(amount, id, lp)			
+			if(result)
+				return true
+			else
+				return false
 			break;
 
 		case 1:
-			if(toUpdate == "host")
-				await battle.hitHost(amount, id)
-			else if(toUpdate == "guest")
-				await battle.hitGuest(amount, id)
-			return true
+			
+			var result = await battle.hit(amount, id, lp)
+			if(result)
+				return true
+			else
+				return false
 			break;
 
 		case 2:
-			if(toUpdate == "host")
-				await battle.divideHost(amount, id)
-			else if(toUpdate == "guest")
-				await battle.divideGuest(amount, id)
-			return true
+			
+			var result = await battle.divide(amount, id, lp)
+			if(result)
+				return true
+			else
+				return false
 			break;
-		//aggiorno la battaglia
+		
 		case 3:
-			if(toUpdate == "host")
-				await battle.setDeckH(id, req.body.deck)
-			else if(toUpdate == "guest")
-				await battle.setDeckG(id, req.body.deck)
-			return true
+			
+			var result = await battle.setDeck(id, req.body.deck, toUpdate)
+			if(result)
+				return true
+			else
+				return false
 			break;
 
 		default:
@@ -171,8 +175,7 @@ async function updateBattle(req, res)
 	return true
 }
 /*
-1. controllo se l'utente è loggato
-2. controllo se il player è loggato
+viene chiamata appena viene effetuata una delete di un match
 */
 async function endBattle(req, res)
 {
@@ -182,7 +185,7 @@ async function endBattle(req, res)
 		res.status(401).send("invalid account")
 		return false;
 	}
-	console.log(req.body)
+	
 	var match = await battle.getById(req.body.id)
 	var player = isInGame(match[0], req.user.username)
 	
@@ -199,13 +202,16 @@ async function endBattle(req, res)
 
 	if(match[0].closeHost == 1 && match[0].closeGuest == 1)
 	{
+		/*
+		la partita verrà chiusa definitivamente solo dopo che
+		sia l'host che il guest avranno deciso di chiuderla
+		*/
 		setWinner(match[0])
 		await battle.close(req.body.id)
 	}
-
 }
 
-//retorna host o guest se il player è uno di loro altrimenti ritorna false
+//ritorna host o guest se il player è uno di loro altrimenti ritorna false
 function isInGame(match, player)
 {
 	if(match.host == player)
@@ -231,12 +237,4 @@ async function setWinner(match)
 	await battle.setWinner(match.id, winner, loser)
 }
 
-
-
-module.exports=
-{
-	joinBattle: joinBattle,
-	createBattle: createBattle,
-	updateBattle: updateBattle,
-	endBattle: endBattle
-}
+module.exports={joinBattle, createBattle, updateBattle, endBattle}

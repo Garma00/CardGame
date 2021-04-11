@@ -1,5 +1,6 @@
 var db = require('./db.js')
 
+//ritorna il numero di carte presenti nel deck
 async function getDeckLength(deck, user)
 {
 	var q = "select copies from cards where deck = ? and user = ?"
@@ -11,6 +12,7 @@ async function getDeckLength(deck, user)
 	return size
 }
 
+//ritorna la carta richiesta dal deck richiesto
 async function getCardFromDeck(card, deck, user)
 {
 	var q = "select * from cards where name = ? and deck = ? and user = ?"
@@ -18,6 +20,7 @@ async function getCardFromDeck(card, deck, user)
 	return rows
 }
 
+//ritorna tutte le carte relative al deck passato come parametro
 async function getFromDeck(deck, user)
 {
 	var q = "select * from cards where deck = ? and user = ?"
@@ -78,6 +81,7 @@ async function removeCard(card, deck, user)
 	return result
 }
 
+//elimino tutte le carte relative al deck
 async function deleteDeck(deck, user)
 {
 	var q = "delete from cards where deck = ? and user = ?"
@@ -86,16 +90,14 @@ async function deleteDeck(deck, user)
 }
 module.exports=
 {
-	getFromDeck: getFromDeck,
-	getCardFromDeck:getCardFromDeck,
-	getCopiesNumber:getCopiesNumber,
-	newCopy:newCopy,
-	newCard:newCard,
-	getDeckLength:getDeckLength,
-	getSizeByType:getSizeByType,
-	removeCopy:removeCopy,
-	removeCard:removeCard,
-	deleteDeck:deleteDeck
-
-
+	getFromDeck,
+	getCardFromDeck,
+	getCopiesNumber,
+	newCopy,
+	newCard,
+	getDeckLength,
+	getSizeByType,
+	removeCopy,
+	removeCard,
+	deleteDeck
 }

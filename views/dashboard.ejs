@@ -10,7 +10,7 @@
       <!--Let browser know website is optimized for mobile-->
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script type="text/javascript" src="dashboard.js"></script>
+	<script type="module" src="dashboard.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <div class="container">
@@ -69,12 +69,14 @@
 				
 			</table>
 			<h2>Entra in una partita</h2>
-			<form action="/battle" method="get">
+			<form action="/match" method="get">
 				<input type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
 				
 				<button id="joinGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">entra</button>
 			</form>
-			<form action="/battle" method="post"><button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button></form>
+			<form action="/battle" method="post">
+				<button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button>
+			</form>
 		</center>
 	</div>
 		<h4 class="flow-text hide col s1" id="win"><%=win%></h4>

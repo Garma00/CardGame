@@ -1,5 +1,9 @@
 var db = require('./db.js')
 
+/*
+ritorna il numero di partite che l'utente passato 
+ha giocato con il deck passato
+*/
 async function getByDeckUsed(deck, user)
 {
 	var q = "select * from battles where (deckHost = ? or deckGuest = ?) and (host = ? or guest = ?) and inCourse = 0"
@@ -66,53 +70,36 @@ async function newBattle(host)
 
 async function joinGuest(guest, id)
 {
-	var q = "update battles set guest = ?, activeUsers = 2 where id = ?"
+	var q = "update battles set guest = ? where id = ?"
 	var result = await db.query(q, [guest, id])
 	return result
 }
 
-async function healHost(amount, id)
+//aumenta gli lp della quantità passata
+async function heal(amount, id, lp)
 {
-	var q = "update battles set lpHost = lpHost + ? where id = ?"
+	var q = "update battles set " + lp + " = " + lp  + " + ? where id = ?"
 	var result = await db.query(q, [amount, id])
 	return result
 }
 
-async function hitHost(amount, id)
+//diminuisce gli lp della quantità passata
+async function hit(amount, id, lp)
 {
-	var q = "update battles set lpHost = lpHost - ? where id = ?"
+	var q = "update battles set " + lp + " = " + lp + " -? where id = ?"
 	var result = await db.query(q, [amount, id])
 	return result
 }
 
-async function divideHost(amount, id)
+//divide gli lp della quantità passata
+async function divide(amount, id, lp)
 {
-	var q = "update battles set lpHost = lpHost / ? where id = ?"
+	var q = "update battles set " + lp + " = " + lp + "/? where id = ?"
 	var result = await db.query(q, [amount, id])
 	return result
 }
 
-async function healGuest(amount, id)
-{
-	var q = "update battles set lpGuest = lpGuest + ? where id = ?"
-	var result = await db.query(q, [amount, id])
-	return result
-}
-
-async function hitGuest(amount, id)
-{
-	var q = "update battles set lpGuest = lpGuest - ? where id = ?"
-	var result = await db.query(q, [amount, id])
-	return result
-}
-
-async function divideGuest(amount, id)
-{
-	var q = "update battles set lpGuest = lpGuest / ? where id = ?"
-	var result = await db.query(q, [amount, id])
-	return result
-}
-
+//chiude il match per l'host
 async function closeHost(id)
 {
 	var q = "update battles set closeHost = 1 where id = ?"
@@ -120,6 +107,7 @@ async function closeHost(id)
 	return result
 }
 
+//chiude il match per il guest
 async function closeGuest(id)
 {
 	var q = "update battles set closeGuest = 1 where id = ?"
@@ -127,6 +115,7 @@ async function closeGuest(id)
 	return result
 }
 
+//chiude definitivamente la partita
 async function close(id)
 {
 	var q = "update battles set inCourse = 0 where id = ?"
@@ -141,42 +130,31 @@ async function setWinner(id, winner, loser)
 	return result
 }
 
-async function setDeckH(id, deck)
+//imposta il matzzo del guest o dell'host nella partita specificata
+async function setDeck(id, deck, toUpdate)
 {
-	var q = "update battles set deckHost = ? where id = ?"
-	var result = await db.query(q, [deck, id])
-	return result
-}
-
-async function setDeckG(id, deck)
-{
-	var q = "update battles set deckGuest = ? where id = ?"
+	var q = "update battles set " + toUpdate +" = ? where id = ?"
 	var result = await db.query(q, [deck, id])
 	return result
 }
 
 module.exports=
 {
-	newBattle: newBattle,
-	getById: getById,
-	joinGuest: joinGuest,
-	healHost: healHost,
-	hitHost: hitHost,
-	divideHost: divideHost,
-	healGuest: healGuest,
-	hitGuest: hitGuest,
-	divideGuest: divideGuest,
-	closeHost: closeHost,
-	closeGuest: closeGuest,
-	close: close,
-	setWinner: setWinner ,
-	getEndedGames: getEndedGames,
-	setDeckH: setDeckH,
-	setDeckG: setDeckG,
-	getWin: getWin,
-	getLose: getLose,
-	getWinWithDeck: getWinWithDeck,
-	getLoseWithDeck: getLoseWithDeck,
-	getByDeckUsed: getByDeckUsed
-
+	newBattle,
+	getById,
+	joinGuest,
+	heal,
+	hit,
+	divide,
+	closeHost,
+	closeGuest,
+	close,
+	setWinner ,
+	getEndedGames,
+	setDeck,
+	getWin,
+	getLose,
+	getWinWithDeck,
+	getLoseWithDeck,
+	getByDeckUsed
 }

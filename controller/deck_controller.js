@@ -5,9 +5,9 @@ var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
 var battle = require('../model/battle_model.js')
 
+
 async function newDeck(req, res)
 {
-	var deckName = req.body.deck
 	//se l'utente è loggato 
 	var token = await util.verifyToken(req, res)
 	if(!token)
@@ -15,18 +15,18 @@ async function newDeck(req, res)
 		res.status(401).send("invalid account")
 		return false;
 	}
+	
 	//se il nome del deck non è già stato preso dallo stesso utente
-	console.log("deck name --> " + deckName)
-	var rows = await alreadyHave(deckName, req.user.username)
+	console.log("post request to /deck from --> " + req.user.username + " adding --> " + req.body.deck)
+	var rows = await alreadyHave(req.body.deck, req.user.username)
 	
 	if(rows)
 	{
 		res.status(409).send("Questo nome non è più disponibile")
 		return false;
 	}
-	if(deck.insert(deckName, req.user.username))
+	if(deck.insert(req.body.deck, req.user.username))
 	{
-		console.log("deck inserito con successo")
 		res.redirect('/dashboard')
 		return true	
 	}
@@ -34,6 +34,7 @@ async function newDeck(req, res)
 		return false	
 }
 
+//ritorna true se l'utente possiede già un mazzo con lo stesso nome
 async function alreadyHave(name, user)
 {
 	var rows = await deck.getByName(name, user)
@@ -42,8 +43,7 @@ async function alreadyHave(name, user)
 	return false
 }
 
-//reindirizza ad una pagina con la lista delle carte presenti 
-//nel deck richiesto 
+//renderizza alla pagina con le caratteristiche del deck
 async function showDeck(req, res)
 {
 	var token = await util.verifyToken(req, res)
@@ -54,70 +54,79 @@ async function showDeck(req, res)
 	}
 	var deckName = req.query.deckName
 	var username = req.user.username
-	console.log(username)
-	console.log(req.query)
-	//con delle query ottengo delle informazioni da mostrare del model
+	console.log("get request to /mazzo from --> " + username)
+
+	//ottengo i dati relativi al deck da mostrare nella pagina
 	var rows = await cards.getFromDeck(deckName, username)
 	var size = await cards.getDeckLength(deckName, username)
 
-		spells = await cards.getSizeByType(deckName, username, "spell card"),
-		traps = await cards.getSizeByType(deckName, username, "Trap Card"),
-		normalMonsters = await cards.getSizeByType(deckName, username, "normal monster"),
-		effectMonsters = await cards.getSizeByType(deckName, username, "effect monster"),
-		synchroMonsters =  await cards.getSizeByType(deckName, username, "synchro monster"),
-		tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster"),
-		totalCards =  normalMonsters + effectMonsters + synchroMonsters + tunerMonsters + spells + traps
-		win =  await battle.getWinWithDeck(deckName, username),
-		lose =  await battle.getLoseWithDeck(deckName, username)
-
+	var spells = await cards.getSizeByType(deckName, username, "spell card")
+	var traps = await cards.getSizeByType(deckName, username, "Trap Card")
+	var normalMonsters = await cards.getSizeByType(deckName, username, "normal monster")
+	var effectMonsters = await cards.getSizeByType(deckName, username, "effect monster")
+	var synchroMonsters =  await cards.getSizeByType(deckName, username, "synchro monster")
+	var xyzMonsters = await cards.getSizeByType(deckName, username, "XYZ Monster")
+	var fusionMonsters = await cards.getSizeByType(deckName, username, "Fusion Monster")
+	var linkMonsters = await cards.getSizeByType(deckName, username, "Link Monster")
+	var extraMonsters = synchroMonsters + xyzMonsters + fusionMonsters + linkMonsters
+	var tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster")
+	var win =  await battle.getWinWithDeck(deckName, username)
+	var lose =  await battle.getLoseWithDeck(deckName, username)
+		
 	var obj =
 	{
 		username: req.user.username,
-		deck:deckName,
-		cards: rows,
-		size: size,
-		spells: spells,
-		traps: traps,
-		normalMonsters: normalMonsters,
-		effectMonsters: effectMonsters,
-		synchroMonsters: synchroMonsters,
-		tunerMonsters: tunerMonsters,
-		totalCards: totalCards,
-		win: win,
-		lose: lose
-
+		deck:deckName,						//nome
+		cards: rows,						//lista delle carte
+		size: size,							//numero totale delle carte
+		spells: spells,						//carte magia
+		traps: traps,						//carte trappola
+		normalMonsters: normalMonsters,		//mostri senza effetto
+		effectMonsters: effectMonsters,		//mostri con effetto
+		extraMonsters: extraMonsters,		//mostri dell'extra deck
+		tunerMonsters: tunerMonsters,		//mostri tuner
+		win: win,							//vittorie
+		lose: lose 							//sconfitte
 	}
 	res.render('deck.ejs', obj)
-
+	return true
 }
 
-//chiamata quando viene effettuata una put
+/*
+se l'utente è loggato allore controllo  in base al numero passato:
+0. l'utente vuole aggiungere la carta passata
+1. l'utente vuole rimuovere la carta passata
+*/
 async function modifyDeck(req, res)
 {
-
-	console.log("modify deck")
 	var token = await util.verifyToken(req, res)
 	if(!token)
 	{
 		res.status(401).send("invalid account")
 		return false;
 	}
-
+	
+	console.log("put request to deck from --> " + req.user.username)
 	switch(parseInt(req.body.type))
 	{
 		case 0:
-			console.log("try to add card")
-			await addCard(req, res)
+			if(await addCard(req, res))
+				return true
+			else
+				return false
 			break;
 		case 1:
-			console.log("try to remove card")
-			await removeCard(req, res)
+			if(await removeCard(req, res))
+				return true
+			else
+				return false
 			break;
 	}
 
 	return true
 }	
 
+//ritorna true se la carta è stata inserica con successo altrimenti ritorna false
 async function addCard(req, res)
 {
 	var toInsert = req.body.card
@@ -126,14 +135,12 @@ async function addCard(req, res)
 
 	console.log(toInsert.name + " " + deck + " " + username)
 
-	console.log("server side i want to insert --> " + toInsert.name)
 	//controllo se la carta non è stata iserita 3 volte
 	var rows = await cards.getCardFromDeck(toInsert.name, deck, username)
 	if(rows)
 	{
 		//controllo il numero di copie della carta presenti nel mazzo
 		var copies = await cards.getCopiesNumber(toInsert.name, deck, username)
-		console.log(copies)
 		if(copies >= 3)
 		{
 			//numero di copie massimo raggiunto
@@ -158,28 +165,28 @@ async function addCard(req, res)
 	
 }
 
-/*
-1. controllo se nel mazzo è presente quella carta
-2. se è presente controllo se copies > 1
-*/
+
+//ritorna true se la carta è stata rimossa con successo, false viceversa
 async function removeCard(req, res)
 {
-	var toInsert = req.body.card
+	var toDelete = req.body.card
 	var deck = req.body.deck
 	var username = req.user.username
 
-	var rows = await cards.getCardFromDeck(toInsert.name, deck, username)
+	//controllo se la carta è presente nel mazzo
+	var rows = await cards.getCardFromDeck(toDelete.name, deck, username)
 	if(!rows)
 	{
-		console.log("cant remove this card") 
+		console.log("this card is not in the deck, you cant remove it") 
 		return false
 	}
-		
+	
+	//controllo se vi è più di una copia
 	var copies = rows[0].copies
 	if(copies > 1)
-		cards.removeCopy(toInsert.name, deck, username)
+		cards.removeCopy(toDelete.name, deck, username)
 	else
-		cards.removeCard(toInsert.name, deck, username)
+		cards.removeCard(toDelete.name, deck, username)
 	
 	return true
 }
@@ -188,7 +195,6 @@ async function removeCard(req, res)
 1. se l'utente è connesso
 2. controllo se l'utente possiede il mazzo che vuole eliminare
 */
-
 async function deleteDeck(req, res)
 {	
 	var token = await util.verifyToken(req, res)
@@ -200,11 +206,13 @@ async function deleteDeck(req, res)
 	
 	var toDelete = req.body.deck
 	var username = req.user.username
-
-	//rimuovo le carte dalla lista
+	
+	//se l'utente possiedo il mazzo procedo
 	if(deck.getByNameAndOwner(toDelete, username))
 	{
+		//elimino tutte le carte relative al deck
 		await cards.deleteDeck(toDelete, username)
+		//elimino il deck
 		await deck.del(toDelete, username)
 		res.redirect("/dashboard")
 		return true
@@ -215,16 +223,9 @@ async function deleteDeck(req, res)
 		res.redirect("/dashboard")
 		return true
 	}
-	
-	
-
 }
 
-/*
-######################################################
-*/
-
-//esegue una get all'endpoint card Info di YGO PRODECK e ritorna l'immagine
+//esegue una get all'endpoint card Info di YGO PRODECK e ritorna i dati
 async function findCardByName(req, res)
 {
 	var token = await util.verifyToken(req, res)
@@ -249,17 +250,4 @@ async function findCardByName(req, res)
 	})
 }
 
-function dashboardPage(req, res)
-{
-	res.render('/dashboard', {})
-}
-
-module.exports=
-{
-	newDeck:newDeck,
-	alreadyHave:alreadyHave,
-	findCardByName:findCardByName,
-	showDeck: showDeck,
-	modifyDeck:modifyDeck,
-	deleteDeck:deleteDeck
-}
+module.exports = {newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}

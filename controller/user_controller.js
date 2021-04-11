@@ -17,11 +17,9 @@ async function newAccount(req, res)
 {
 	var username = req.body.username
 	var password = req.body.password
-	console.log(username, password)
 	if(username == null || password == null)
 	{
 		//l'utente ha lasciato almeno un campo vuoto 
-		//redirect a submit.ejs
 		res.status(400).send("invalid username or password")
 	}
 	else
@@ -39,18 +37,21 @@ async function newAccount(req, res)
 			var hash = await hashPassword(password)
 			
 			if(hash == null)
-				res.send("cannot hash password")
+			{
+				console.log("cannot hash password")
+				return false;
+			}
 			else
 			{
 				var result = await users.insert(username, hash)
 				if(result)
 					res.render("login.ejs", {})
-					//redirect a login.ejs
 			}
 		}
 	}
 }
 
+//prende in input il plain text e ritorna il digegst
 async function hashPassword(password)
 {
 	const salt = 10;
@@ -81,6 +82,7 @@ async function hashPassword(password)
 }
 
 /*
+chiamata per eseguire il login dell'utente
 1.controllo che i due campi del form non siano vuoti
 2.controllo che username e password siano corretti
 3.se va tutto bene ritorno il token
@@ -91,13 +93,16 @@ async function startSession(req, res)
 	var username = req.body.username
 	var password = req.body.password
 	console.log("Post request to login")
-	console.log(username + " " + password)
+	
+	//l'utente ha lasciato almento un campo vuoto
 	if(username == null || password == null)
+	{
 		res.status(400).send("invalid username or password")
+		return false
+	}
 	else
 	{
 		var rows = await users.getByUsername(username)
-		//console.log(rows[0].password)
 		if(rows)
 		{
 			var result = await comparePw(password, rows[0].password)
@@ -105,17 +110,25 @@ async function startSession(req, res)
 			{
 				//genero un JWT
 				util.generateToken(res, username)
-				//obj = {username: username}
 				res.redirect('/dashboard')
+				return true
 			}
 			else
+			{
 				res.status(401).send("invalid account")
+				return false
+			}
 		}
 		else
+		{
 			res.status(401).send("invalid account")
+			return false
+		}
 	}
 }
 
+/*prende in input plain text e digest, ritorna true o false se 
+la comparazione va a buon fine o meno*/
 async function comparePw(password, hash)
 {
 	var p = new Promise(function(resolve, reject)
@@ -134,16 +147,15 @@ async function comparePw(password, hash)
 	try
 	{
 		var result =  await p
-		console.log("promessa di login mantenuta")
 		return true
 	}
 	catch(err)
 	{
-		console.log("promessa di login non mantenuta --> " + err)
 		return false
 	}
 }
 
+//renderizza alla pagina di registrazione
 function submitPage(req, res)
 {
 	//ritorno la pagina di submnit
@@ -151,13 +163,17 @@ function submitPage(req, res)
 	res.render('submit.ejs', {})
 }
 
+//renderizza alla pagina di login
 function home(req, res)
 {
 	console.log("get request to /")
 	res.render("login.ejs", {})
 }
 
-//per orgni deck ritorna il numero di volte che è stato utilizzato
+/*
+per ogni deck posseduto dell'utente passato controllo 
+il numero di volte che lo ha utilizzato nelle partite già concluse
+*/
 async function deckUsed(user)
 {
 	var decks = await deck.getOwnersDeck(user)
@@ -175,56 +191,38 @@ async function deckUsed(user)
 	return used
 }
 
+//dopo aver raccolto tutti i dati relativi all'utente renderizzo alla dashboard
 async function dashboardPage(req, res)
 {
 	var token = await util.verifyToken(req, res)
 	console.log("get request to /dashboard from user --> " + req.user.username)
-	var decks = await getMyDecks(req)
-	var games = await getGames(req.user.username)
-	var win = await battle.getWin(req.user.username)
-	var lose = await battle.getLose(req.user.username)
-	var used = await deckUsed(req.user.username)
-
-
-	console.log(used)
+	
+	//raccolgo tutti i dati necessari
+	var decks = await deck.getOwnersDeck(req.user.username)		
+	var games = await battle.getEndedGames(req.user.username)	 
+	var win = await battle.getWin(req.user.username)			
+	var lose = await battle.getLose(req.user.username)			 
+	var used = await deckUsed(req.user.username)				
 	
 	var obj = 
 	{
-		username: req.user.username,
-		decks: decks,
-		games: games,
-		win: win,
-		lose: lose,
-		used: used
+		username: req.user.username,	
+		decks: decks,	//deck posseduti
+		games: games,	//partite giocate
+		win: win,		//partite vinte
+		lose: lose,		//partite perse
+		used: used 		//numero di volte in cui ha usato ogni deck 
 	}
 	if(token)
+	{
 		res.status(200).render("dashboard.ejs", obj)
+		return true
+	}
 	else
+	{
 		res.status(401).send("Sessione scaduta")
+		return false
+	}
 }
 
-async function getMyDecks(req)
-{
-	var owner = req.user.username
-	var decks = await deck.getOwnersDeck(owner)
-	return decks
-}
-
-//ritorno i game dell'utente che sono già terminati
-async function getGames(user)
-{
-	console.log("getting " + user + "'s games")
-	var rows = await battle.getEndedGames(user)
-	return rows
-}
-
-
-
-module.exports=
-{
-	startSession: startSession,
-	newAccount: newAccount,
-	submitPage: submitPage,
-	home: home,
-	dashboardPage: dashboardPage
-}
+module.exports={startSession, newAccount, submitPage, home, dashboardPage}

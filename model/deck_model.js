@@ -7,6 +7,7 @@ async function getByNameAndOwner(name, owner)
 	return rows
 }
 
+//elimino il deck
 async function del(name, owner)
 {
 	var q = "delete from decks where name = ? and owner = ?"
@@ -22,12 +23,14 @@ async function getByName(name)
 	return rows
 }
 
+//ritorna true se il deck è stato inserito con successo
 async function insert(name, owner)
 {
 	var q = "insert into decks (name, owner) values(?, ?)"
 	var result = db.query(q, [name, owner])
 	return result
 }
+
 //ritorno tutti i deck di un utente
 async function getOwnersDeck(owner)
 {
@@ -36,12 +39,4 @@ async function getOwnersDeck(owner)
 	return rows
 }
 
-module.exports=
-{
-	getByName:getByName,
-	insert:insert,
-	getOwnersDeck:getOwnersDeck,
-	del:del,
-	getByNameAndOwner:getByNameAndOwner,
-	
-}
+module.exports={getByName, insert, getOwnersDeck, del, getByNameAndOwner}

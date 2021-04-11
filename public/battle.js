@@ -8,6 +8,8 @@ window.onload = function()
 	var selectDeck = document.getElementById("selectDeck")
 	var decks = document.getElementsByName("deckName")
 
+	/*la updateMatch verrà utilizzata per le varie modifiche ai deck
+	ed i punti vita*/
 	heal.addEventListener("click", function(){updateMatch(0)})
 	hit.addEventListener("click", function(){updateMatch(1)})
 	divide.addEventListener("click", function(){updateMatch(2)})
