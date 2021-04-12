@@ -10,7 +10,7 @@ router.get('/search', deck_controller.findCardByName)
 //renderizza alla pagina con le statistiche del mazzo
 router.get('/mazzo', deck_controller.showDeck)
 
-//router.get('/deck', deck_ontroller.getDeck)
+router.get('/deck', deck_controller.getDeck)
 router.post('/deck', deck_controller.newDeck)
 router.put('/deck', deck_controller.modifyDeck)
 router.delete('/deck', deck_controller.deleteDeck)

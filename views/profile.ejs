@@ -9,43 +9,52 @@
       <link rel="stylesheet" type="text/css" href="cardGame.css">
       <!--Let browser know website is optimized for mobile-->
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script type="module" src="dashboard.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script type="module" src="profile.js"></script>
 	<%- include('./search_bar'); %>
 </head>
 <div class="container">
 <body class="blue-grey darken-4">
-
 	<div class="row">
 		<div class="card-content blue-grey darken-3 col s5 ">
 			<center>
-			<h1 class="flow-Text"><%=username%></h1>	
-			<form action="/deck" method="post">
-				
-					<input type="text" placeholder="nome del nuovo deck" class="input-field" name="deck">
-				
-					<button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
-			</form>	
+				<h1 id="username" class="flow-Text"><%=username%></h1>
 			</center>	
 		</div>
 		<div class="card-content blue-grey darken-3 col s6 offset-s1">
-			<h2>I tuoi deck</h2>	
+			<h2>Lista deck</h2>	
 		
 			<ul id="deckList">
-				<%for (var deck in decks)
+				<%for (var mazzo in mazzi)
 				{
 					%>
 						<li>
-							<button name="deckName" class="sameSize mazzo waves-effect waves-light deep-orange lighten-1 z-depth-4 btn"><%=decks[deck].name%></button>
+							<button data-target="modal_<%=mazzi[mazzo].name%>" name="deckName" class="sameSize mazzo waves-effect waves-light deep-orange lighten-1 z-depth-4 btn modal-trigger"><%=mazzi[mazzo].name%></button>	
 						</li>
 					<%
 				}%>
 			</ul>
 		</div>
-	</div>
 
-	<div class="row blue-grey darken-3 z-depth-4">
+		<%for (var i in decks)
+		{%>
+			<div id="modal_<%=decks[i].name%>" class="modal">
+				<div class="modal-content">
+					
+					<ul>
+						<%for (var j in decks[i].cards)
+						{
+							%>
+
+								<li><%=decks[i].cards[j].name%> x<%=decks[i].cards[j].copies%></li>
+							<%
+						}%>
+					</ul>
+				</div>
+			</div>	
+		<%}%>
+		
+		<div class="row blue-grey darken-3 z-depth-4">
 		<center>
 			<h2>Ultime partite</h2>
 			<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1">
@@ -70,16 +79,7 @@
 					}%>
 				
 			</table>
-			<h2>Entra in una partita</h2>
-			<form action="/match" method="get">
-				<input type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
-				
-				<button id="joinGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">entra</button>
-			</form>
-			<form action="/battle" method="post">
-				<button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button>
-			</form>
-		</center>
+			</center>
 	</div>
 		<h4 class="flow-text hide col s1" id="win"><%=win%></h4>
 		<h4 class="flow-text hide col s1" id="lose"><%=lose%></h4>
@@ -104,6 +104,7 @@
 		<%
 	}%>
 	
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
+</div>
 </html>

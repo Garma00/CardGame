@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="materialize.min.css"  media="screen,projection"/>
+      <link rel="stylesheet" type="text/css" href="cardGame.css">
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<h4 class="flow-text center">Ricerca un giocatore</h4>
+		<form action="/profile" method="get">
+			<input input type="text" placeholder="nome del giocatore" class="input-field col s6" name="username">
+			<button  class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4 col s2 offset-s1">trova</button>
+		</form>
+		<form action="/dashboard" method="get">
+			<button class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4 col s2 offset-s1"><i class="material-icons">face</i></button>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

@@ -6,7 +6,7 @@ var router = express.Router()
 router.get('/match', battle_controller.joinBattle)
 
 //ritorna dati relativi ad una battaglia
-//router.get('/battle', battle_controller.detBattle)
+router.get('/battle', battle_controller.getBattle)
 router.post('/battle', battle_controller.createBattle)
 router.put('/battle', battle_controller.updateBattle)
 router.delete('/battle', battle_controller.endBattle)

@@ -30,6 +30,13 @@ function createChart(type, labels, data)
         },
         options:
         {
+            plugins:
+            {
+                legend:
+                {
+                    display: false
+                }
+            },
             scales:
             {
                 y:
@@ -39,7 +46,7 @@ function createChart(type, labels, data)
             }
         }
     }
-    
+
     return obj
 }
 

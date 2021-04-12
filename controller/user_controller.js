@@ -2,9 +2,89 @@ var express = require('express')
 var users = require('../model/user_model')
 var deck = require('../model/deck_model.js')
 var battle = require('../model/battle_model.js')
+var card = require('../model/cards_model.js')
 var bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 var util = require('../utility.js')
+
+//renderizza al profilo di un utente non loggato
+async function getProfile(req, res)
+{
+
+	var user = await getUserData(req.query.username)
+	
+	if(user)
+	{
+		console.log("reading data from " + user.username)
+		res.render('profile.ejs', user)
+		return true
+	}
+	else
+	{
+		res.send("utente non trovato")
+		return false
+	}
+}
+
+//restituisce l'utente rischiesto sotto forma di json
+async function getUser(req, res)
+{
+	var response = await getUserData(req.query.username)
+	res.status(200).json(response)
+	return true
+}
+
+async function getUserData(username)
+{
+	var user = await users.getByUsername(username)
+	if(!user)
+		return false
+	var mazzi = await deck.getOwnersDeck(username)
+	var array = []
+	console.log("username")
+	console.log(user[0].username)
+	//per ogni mazzo creo un ogetto contenente il nome e la lista di carte
+	if(mazzi)
+	{
+		for(var i = 0; i < mazzi.length; i++)
+		{
+
+			var rows = await card.getFromDeck(mazzi[i].name, user[0].username)
+			//console.log(user)
+			console.log("rows")
+			console.log(rows)
+			var obj=
+			{
+				name: mazzi[i].name,
+				cards: rows
+			}
+
+			array[i] = obj
+		}		
+	}
+
+
+	var matches = await battle.getEndedGames(username)
+	var used = await await deckUsed(username) 
+	var win = await battle.getWin(username)
+	var lose = await battle.getLose(username)
+	var winrate = (win / (win + lose)) * 100
+	var user = 
+	{
+		username: user[0].username,
+		mazzi: mazzi,
+		win: win,
+		lose: lose,
+		winrate: winrate + "%",
+		games: matches,
+		used: used,
+		decks: array
+	}
+	console.log("info carta")
+	console.log(array)
+
+	return user
+}
 
 /*
 1. controlli sui parametri passati in modo che non siano vuoti
@@ -225,4 +305,4 @@ async function dashboardPage(req, res)
 	}
 }
 
-module.exports={startSession, newAccount, submitPage, home, dashboardPage}
+module.exports={getProfile, getUser, startSession, newAccount, submitPage, home, dashboardPage}

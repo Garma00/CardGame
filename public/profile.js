@@ -2,24 +2,17 @@ import * as util from './utility.js'
 
 window.onload = function()
 {
-    /*
-    inserisco il numero di vittorie e di sconfitte che mi serviranno per
-    il grafico del winrate
-    */
-    var winVsLose = []
-    winVsLose[0] = document.getElementById("win").innerHTML
+	var winVsLose =  []
+	winVsLose[0] = document.getElementById("win").innerHTML
     winVsLose[1] = document.getElementById("lose").innerHTML
 
-    /*
-    ogni bottone rappresenta un mazzo posseduto dall'utente, in questo modo
-    do la possibilità di clickare sopra ad ognuno di essi per aprire la pagina
-    relativa al mazzo
-    */
-	var buttons = document.getElementsByClassName("waves-effect mazzo waves-light deep-orange lighten-1 btn")
-	for(var i = 0; i < buttons.length; i++)
-		buttons[i].addEventListener("click", decks)
+    var username = document.getElementById("username").innerHTML
 
-    /*
+    var buttons = document.getElementsByClassName("mazzo")
+	for(var i = 0; i < buttons.length; i++)
+		buttons[i].addEventListener("click", function(){decks(this.textContent, username)})
+
+	/*
     ottengo il nome di ogni mazzo 
     */
 	var array1 = document.getElementsByClassName("mazzo")
@@ -35,7 +28,7 @@ window.onload = function()
 	for(i = 0; i < array2.length; i++)
 		counter[i] = array2[i].innerHTML
 
-    /*
+	/*
     creo il grafico del winrate ed il grafico che rappresenta l'utilizzo
     di ogni mazzo 
     */
@@ -46,13 +39,13 @@ window.onload = function()
 
 }
 
-/*
-se viene clickato il bottone che rappresenta 
-il mazzo lancio una get con parametro
-*/
-function decks()
+//mostra le carte del deck con una popup
+function decks(name, owner)
 {
-	var param = "?deckName=" + this.innerHTML
-	window.open('/mazzo'+param, "_self")
-}
 
+	var options = {opacity: 0.7}
+	var elems = document.querySelectorAll('.modal');
+	
+	var instances = M.Modal.init(elems, options);
+
+}

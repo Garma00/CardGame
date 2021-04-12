@@ -5,6 +5,19 @@ var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
 var battle = require('../model/battle_model.js')
 
+//ritorna il deck di un utente passati come parametro
+async function getDeck(req, res)
+{
+	console.log(req.query.deck)
+	console.log(req.query.username)
+	var response =
+	{
+		cards: await cards.getFromDeck(req.query.deck, req.query.username)	
+	} 
+	console.log("response")
+	console.log(response)
+	res.status(200).json(response)
+}
 
 async function newDeck(req, res)
 {
@@ -250,4 +263,4 @@ async function findCardByName(req, res)
 	})
 }
 
-module.exports = {newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}
+module.exports = {getDeck, newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}

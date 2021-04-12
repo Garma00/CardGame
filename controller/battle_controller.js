@@ -2,6 +2,16 @@ var express = require('express')
 var util = require('../utility.js')
 var battle = require('../model/battle_model.js')
 var deck = require('../model/deck_model.js')
+
+async function getBattle(req, res)
+{
+	var response = 
+	{
+		battle: await battle.getById(req.query.id)
+	}
+	res.status(200).json(response)
+}
+
 /*
 1. controllo se l'utente è loggato 
 2. controllo se l'utente è l'host
@@ -237,4 +247,4 @@ async function setWinner(match)
 	await battle.setWinner(match.id, winner, loser)
 }
 
-module.exports={joinBattle, createBattle, updateBattle, endBattle}
+module.exports={getBattle, joinBattle, createBattle, updateBattle, endBattle}
