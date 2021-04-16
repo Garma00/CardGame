@@ -21,7 +21,7 @@ async function getProfile(req, res)
 	}
 	else
 	{
-		res.send("utente non trovato")
+		res.status(404).json({message: "utente non trovato"})
 		return false
 	}
 }
@@ -29,7 +29,8 @@ async function getProfile(req, res)
 //restituisce l'utente rischiesto sotto forma di json
 async function getUser(req, res)
 {
-	var response = await getUserData(req.query.username)
+    console.log("username --> " + req.params.username)
+	var response = await getUserData(req.params.username)
 	res.status(200).json(response)
 	return true
 }
@@ -39,30 +40,26 @@ async function getUserData(username)
 	var user = await users.getByUsername(username)
 	if(!user)
 		return false
-	var mazzi = await deck.getOwnersDeck(username)
+	var decks = await deck.getOwnersDeck(username)
 	var array = []
 	console.log("username")
 	console.log(user[0].username)
 	//per ogni mazzo creo un ogetto contenente il nome e la lista di carte
-	if(mazzi)
+	if(decks)
 	{
-		for(var i = 0; i < mazzi.length; i++)
+		for(var i = 0; i < decks.length; i++)
 		{
 
-			var rows = await card.getFromDeck(mazzi[i].name, user[0].username)
-			//console.log(user)
-			console.log("rows")
-			console.log(rows)
+			var rows = await card.getFromDeck(decks[i].name, user[0].username)
 			var obj=
 			{
-				name: mazzi[i].name,
+				name: decks[i].name,
 				cards: rows
 			}
 
 			array[i] = obj
 		}		
 	}
-
 
 	var matches = await battle.getEndedGames(username)
 	var used = await await deckUsed(username) 
@@ -72,7 +69,6 @@ async function getUserData(username)
 	var user = 
 	{
 		username: user[0].username,
-		mazzi: mazzi,
 		win: win,
 		lose: lose,
 		winrate: winrate + "%",
@@ -100,7 +96,7 @@ async function newAccount(req, res)
 	if(username == null || password == null)
 	{
 		//l'utente ha lasciato almeno un campo vuoto 
-		res.status(400).send("invalid username or password")
+		res.status(400).json({message: "invalid username or password"})
 	}
 	else
 	{
@@ -109,7 +105,8 @@ async function newAccount(req, res)
 		{
 			//username già preso
 			//redirect a submit.ejs
-			res.status(410).send("Username already taken")
+            console.log(username + " già preso")
+			res.status(410).json({message: "username già preso"})
 		}
 		else
 		{
@@ -119,13 +116,14 @@ async function newAccount(req, res)
 			if(hash == null)
 			{
 				console.log("cannot hash password")
+                res.status(400).json({message: "impossibile registrarsi, riprova."})
 				return false;
 			}
 			else
 			{
 				var result = await users.insert(username, hash)
 				if(result)
-					res.render("login.ejs", {})
+					res.status(200).json({user: result})
 			}
 		}
 	}
@@ -173,38 +171,31 @@ async function startSession(req, res)
 	var username = req.body.username
 	var password = req.body.password
 	console.log("Post request to login")
-	
-	//l'utente ha lasciato almento un campo vuoto
-	if(username == null || password == null)
-	{
-		res.status(400).send("invalid username or password")
-		return false
-	}
-	else
-	{
-		var rows = await users.getByUsername(username)
-		if(rows)
-		{
-			var result = await comparePw(password, rows[0].password)
-			if(result)
-			{
-				//genero un JWT
-				util.generateToken(res, username)
-				res.redirect('/dashboard')
-				return true
-			}
-			else
-			{
-				res.status(401).send("invalid account")
-				return false
-			}
-		}
-		else
-		{
-			res.status(401).send("invalid account")
-			return false
-		}
-	}
+
+
+    var rows = await users.getByUsername(username)
+    if(rows)
+    {
+        var result = await comparePw(password, rows[0].password)
+        if(result)
+        {
+            //genero un JWT
+            var response = util.generateToken(res, username)
+            res.status(200).send(response.req.cookies.token)
+            return true
+        }
+        else
+        {
+            res.status(401).json({message: "invalid account"})
+            return false
+        }
+    }
+    else
+    {
+        res.status(401).json({message: "invalid account"})
+        return false
+    }
+
 }
 
 /*prende in input plain text e digest, ritorna true o false se 
@@ -300,7 +291,7 @@ async function dashboardPage(req, res)
 	}
 	else
 	{
-		res.status(401).send("Sessione scaduta")
+		res.status(401).json({message: "Sessione scaduta"})
 		return false
 	}
 }

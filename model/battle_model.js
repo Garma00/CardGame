@@ -50,7 +50,15 @@ async function getById(id)
 {
 	var q = "select * from battles where id = ?"
 	var rows = await db.query(q, [id])
-	return rows
+	return rows[0]
+}
+
+//ritorna tutte le partite relative ad un utente
+async function getMatches(username)
+{
+    var q = "select * from battles where host = ? or guest = ?"
+    var matches = await db.query(q, [username, username])
+    return matches
 }
 
 //seleziono le ultime 5 partite giocate dall'utente
@@ -100,22 +108,6 @@ async function divide(amount, id, lp)
 }
 
 //chiude il match per l'host
-async function closeHost(id)
-{
-	var q = "update battles set closeHost = 1 where id = ?"
-	var result = await db.query(q, [id])
-	return result
-}
-
-//chiude il match per il guest
-async function closeGuest(id)
-{
-	var q = "update battles set closeGuest = 1 where id = ?"
-	var result = await db.query(q, [id])
-	return result
-}
-
-//chiude definitivamente la partita
 async function close(id)
 {
 	var q = "update battles set inCourse = 0 where id = ?"
@@ -138,6 +130,20 @@ async function setDeck(id, deck, toUpdate)
 	return result
 }
 
+async function getHost(id)
+{
+    var q = "select host from battles where id = ?"
+    var rows = await db.query(q, [id])
+    return rows[0].host
+}
+
+async function getGuest(id)
+{
+    var w = "select guest from battles where id = ?"
+    var rows = await db.query(q, [id])
+    return rows[0].guest
+}
+
 module.exports=
 {
 	newBattle,
@@ -146,8 +152,6 @@ module.exports=
 	heal,
 	hit,
 	divide,
-	closeHost,
-	closeGuest,
 	close,
 	setWinner ,
 	getEndedGames,
@@ -156,5 +160,6 @@ module.exports=
 	getLose,
 	getWinWithDeck,
 	getLoseWithDeck,
-	getByDeckUsed
+	getByDeckUsed,
+    getMatches
 }

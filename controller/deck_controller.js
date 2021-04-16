@@ -5,14 +5,28 @@ var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
 var battle = require('../model/battle_model.js')
 
+//ritorna tutti i deck dell'utente
+async function getDecks(req, res)
+{
+    console.log(req.params.username)
+    var decks = await deck.getOwnersDeck(req.params.username)
+    if(!decks)
+    {
+        res.status(404).json({message: "impossibile trovare questo deck"})
+        return false
+    }
+    res.status(200).json({decks: decks})
+    return true
+}
+
 //ritorna il deck di un utente passati come parametro
 async function getDeck(req, res)
 {
-	console.log(req.query.deck)
-	console.log(req.query.username)
+	console.log(req.params.deck)
+	console.log(req.params.username)
 	var response =
 	{
-		cards: await cards.getFromDeck(req.query.deck, req.query.username)	
+		cards: await cards.getFromDeck(req.params.deck, req.params.username)	
 	} 
 	console.log("response")
 	console.log(response)
@@ -40,7 +54,7 @@ async function newDeck(req, res)
 	}
 	if(deck.insert(req.body.deck, req.user.username))
 	{
-		res.redirect('/dashboard')
+        res.status(200).send({user: req.user.username, deck: req.body.deck})
 		return true	
 	}
 	else
@@ -68,6 +82,7 @@ async function showDeck(req, res)
 	var deckName = req.query.deckName
 	var username = req.user.username
 	console.log("get request to /mazzo from --> " + username)
+    console.log(req.query.deckName)
 
 	//ottengo i dati relativi al deck da mostrare nella pagina
 	var rows = await cards.getFromDeck(deckName, username)
@@ -85,6 +100,14 @@ async function showDeck(req, res)
 	var tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster")
 	var win =  await battle.getWinWithDeck(deckName, username)
 	var lose =  await battle.getLoseWithDeck(deckName, username)
+
+    console.log("mostri extra deck -->" + extraMonsters)
+    console.log("magie --> " + spells)
+    console.log("trappole --> " + traps)
+    console.log("mostri normali --> " + normalMonsters)
+    console.log("mostri con effetto --> " + effectMonsters)
+    console.log("mostri tuner --> " + tunerMonsters)
+
 		
 	var obj =
 	{
@@ -124,15 +147,27 @@ async function modifyDeck(req, res)
 	{
 		case 0:
 			if(await addCard(req, res))
-				return true
+            {
+                res.status(200).send("card inserted")
+                return true
+            }
 			else
-				return false
+            {
+                res.status(400).send("cannot insert this card")
+                return false
+            }
 			break;
 		case 1:
 			if(await removeCard(req, res))
-				return true
+            {
+                res.status(200).send("card removed")
+                return true
+            }
 			else
-				return false
+            {
+                res.status(400).send("cannot remove this card")
+                return false
+            }
 			break;
 	}
 
@@ -227,13 +262,14 @@ async function deleteDeck(req, res)
 		await cards.deleteDeck(toDelete, username)
 		//elimino il deck
 		await deck.del(toDelete, username)
-		res.redirect("/dashboard")
+        res.status(200)
+        res.json({user: username, deck: toDelete})
 		return true
 	}
 	else
 	{
 		console.log(username + " has not " + toDelete + " deck")
-		res.redirect("/dashboard")
+        res.status(404).send("l'utente non possiede questo mazzo")
 		return true
 	}
 }
@@ -263,4 +299,4 @@ async function findCardByName(req, res)
 	})
 }
 
-module.exports = {getDeck, newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}
+module.exports = {getDecks, getDeck, newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}

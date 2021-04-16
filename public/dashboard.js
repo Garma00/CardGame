@@ -2,6 +2,16 @@ import * as util from './utility.js'
 
 window.onload = function()
 {
+    var joinGame = document.getElementById("joinGame")
+    var idGame = document.getElementById("id")
+    joinGame.addEventListener("click", function(){join(idGame.value)})
+
+    var createGame = document.getElementById("createGame")
+    createGame.addEventListener("click", createMatch)
+
+    var deckName = document.getElementById("deckName")
+    var newDeck = document.getElementById("newDeck")
+    newDeck.addEventListener("click", function(){addDeck(deckName.value)})
     /*
     inserisco il numero di vittorie e di sconfitte che mi serviranno per
     il grafico del winrate
@@ -46,13 +56,68 @@ window.onload = function()
 
 }
 
+function createMatch()
+{
+    $.ajax(
+        {
+            url: '/battle',
+            method: 'post',
+            data:{},
+            success: function success(result){window.open('/match/'+result.match.id, '_self')},
+            error: function error(){console.log("impossibile accedere alla partita")}
+        })
+}
+
+function join(idGame)
+{
+    //var request = '/match/'+idGame
+    //window.open(request, '_self')
+    console.log(idGame)
+    $.ajax(
+        {
+            url: '/battle',
+            method: 'put',
+            data: {type: 4, id: idGame},
+            success: function success(result)
+            {
+                console.log("sei entrato in partita")
+                console.log(result.id)
+                window.open('/match/'+result.id, '_self')
+            },
+            error: function error(){M.toast({html: 'partita non più in corso'})}
+        })
+}
+
 /*
 se viene clickato il bottone che rappresenta 
 il mazzo lancio una get con parametro
 */
 function decks()
 {
-	var param = "?deckName=" + this.innerHTML
+	var param = "?deckName=" + this.textContent
 	window.open('/mazzo'+param, "_self")
 }
 
+function addDeck(deckName)
+{
+    console.log("adding deck --> " + deckName)
+    $.ajax(
+        {
+            url: '/deck',
+            method: 'post',
+            data:
+            {
+                deck: deckName,
+            },
+            success: function success(result)
+            {
+                console.log(result)
+                location.reload()
+            },
+            error: function error(obj, error, stat)
+            {
+                //location.reload()
+                M.toast({html: 'Impossibile aggiungere questo deck'})
+            }
+        })
+}

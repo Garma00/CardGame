@@ -19,7 +19,7 @@
 			<h5 id="lose" class="blue-grey darken-2 col s6 hide"><%=lose%></h5>
 	<div class="row blue-grey darken-3">
 		<center>
-			<h1 id="deckId"><%=deck%></h1>
+            <h1 id="deckId"><%=deck%></h1>
 			
 		</center>
 	</div>
@@ -84,6 +84,7 @@
 					<button class="waves-effect waves-light deep-orange darken-4 btn z-depth-4" id="delete">Elimina mazzo</button>
 				</center>
 			</div>
+
 		</center>
 	</div>
 	<div class="row blue-grey darken-3">
@@ -92,11 +93,12 @@
 			<div id="preview" class="col s4"></div>
 			<div class="col s5 offset-s1">
 				<input type="text" class="input-field" placeholder="nome della carta" id="cardName">
-			<button id="find" class="flow-text waves-effect waves-light deep-orange lighten-1 btn z-depth-4">trova</button>
+			<button id="find" onclick="M.toast({html: 'ricerca'})" class="flow-text waves-effect waves-light deep-orange lighten-1 btn z-depth-4">trova</button>
 			</div>
 			<span id="buttonsSpan" class="col s6"></span>
 	</div>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>

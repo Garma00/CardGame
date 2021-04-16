@@ -18,9 +18,9 @@ window.onload = function()
 
 	for(i = 0; i < decks.length; i++)
 		decks[i].addEventListener("click", function(){updateMatch(3, this)})
+
+
 }
-
-
 
 function randomNumber()
 {
@@ -70,7 +70,10 @@ function closeMatch()
 		{
 			id: id
 		},
-		success: function success(result){console.log(result)},
-		error: function error(){console.log("cannot delete match")}
+		success: function success(result){window.open('/dashboard', '_self')},
+		error: function error()
+        {
+            M.toast({html: "solo l'host può chiudere la partita"})
+        }
 	})
 }

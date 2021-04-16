@@ -5,26 +5,26 @@
 		 <!--Import Google Icon Font-->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="materialize.min.css"  media="screen,projection"/>
-      <link rel="stylesheet" type="text/css" href="cardGame.css">
+      <link type="text/css" rel="stylesheet" href="/materialize.min.css"  media="screen,projection"/>
+      <link rel="stylesheet" type="text/css" href="/cardGame.css">
       <!--Let browser know website is optimized for mobile-->
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script type="text/javascript" src="battle.js"></script>
+	<script type="text/javascript" src="/battle.js"></script>
 
 </head>
 <body class="blue-grey darken-4">
 	<div class="container">
 	<center><br>
 		<div class="row">
-			<div class="blue-grey darken-2 z-depth-4 col s3 offset-s1">
+			<div class="blue-grey darken-2 z-depth-4 col s4">
 				<h4 id="host" class="flow-text"><%=host%></h4>
 				<h5><%=deckHost%></h5>
 			</div>
 			<div class="blue-grey darken-2 z-depth-4 col s2 offset-s1">
 				<h4 class="flow-text">VS</h4>
 			</div>
-			<div class="blue-grey darken-2 z-depth-4 col s3 offset-s1">
+			<div class="blue-grey darken-2 z-depth-4 col s4 offset-s1">
 				<h4 id="guest" class="flow-text"><%=guest%></h4>
 				<h5><%=deckGuest%></h5>
 			</div>
@@ -39,8 +39,8 @@
 			<input type="text" placeholder="amount" name="amount" id="amount" class="input-field col s6 offset-s3">
 		</div>
 		<div class="row">
-			<button id="heal" class="waves-effect waves-light deep-green lighten-1 z-depth-4 btn z-depth-4">+</button>
-			<button id="hit" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4">-</button>
+			<button id="heal" class="waves-effect waves-light deep-green lighten-1 z-depth-4 btn">+</button>
+			<button id="hit" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn">-</button>
 			<button id="divide" class="waves-effect waves-light red lighten-1 z-depth-4 btn z-depth-4">/</button>
 		</div>
 		<h4><span id="randomN"></span></h4>
@@ -48,26 +48,17 @@
 		<button id="close" class="waves-effect waves-light red lighten-1 z-depth-4 btn z-depth-4">chiudi match</button><br>
 		<h3 id="id"><%=id%></h3>
 	</center>
-	<ul>
-		<%for (var deck in decksHost)
-		{
-			%>
-				<li>
-					<button name="deckName" class="sameSize waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4"><%=decksHost[deck].name%></button>
-				</li>
-			<%
-		}%>
-	</ul>
 		<ul>
-			<%for (var deck in decksGuest)
+			<%for (var deck in decks)
 			{
 				%>
 					<li>
-						<button name="deckName" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4"><%=decksGuest[deck].name%></button>
+						<button name="deckName" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4"><%=decks[deck].name%></button>
 					</li>
 				<%
 			}%>
 		</ul>
 	</div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </html>

@@ -80,7 +80,6 @@ function search()
 			insert.innerHTML = "inserisci"
 			insert.className = "flow-text waves-effect waves-light deep-green lighten-1 btn z-depth-4 col s6 offset-s4"
 			insert.addEventListener("click", function(){updateDeck(result, deck, 0)})
-			
 
 			remove.innerHTML = "rimuovi"
 			remove.className = "flow-text waves-effect waves-light deep-orange darken-4 btn z-depth-4 col s6 offset-s4"
@@ -111,7 +110,10 @@ function deleteDeck()
 		{
 			deck: deck,
 		},
-		success: function success(result){console.log(result)},
+		success: function success(result)
+        {
+            window.open("/dashboard", "_self")
+        },
 		error: function error(){console.log("delete deck error")}
 	})
 }
@@ -120,11 +122,8 @@ function deleteDeck()
 0. insert a card
 1. delete a card 
 */
-
 function updateDeck(result, deck, type)
 {
-	console.log("insert --> " + result.name + " into --> " + deck)
-	
 	$.ajax(
 	{
 		url:'/deck',
@@ -135,11 +134,22 @@ function updateDeck(result, deck, type)
 			deck: deck,
 			type:type
 		},
-		success: function success(result){console.log(result)},
-
+		success: function success(result)
+        {
+            console.log("prova") 
+            if(type == 0)
+                M.toast({html: 'inserita'})
+            else if(type == 1)
+                M.toast({html: 'rimossa'})
+        },
 		//in caso di errore comunicare all'utente perchè non può aggiungere la carta
-
-		error: function error(){console.log("insert card error")}
+		error: function error()
+        {
+            if(type == 0)
+                M.toast({html: 'non è possibile inserire questa carta'})
+            else if(type == 1)
+                M.toast({html: 'non è possibile rimuovere questa carta'})
+        }
 	})
 
 }

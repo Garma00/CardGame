@@ -23,7 +23,7 @@ async function getCardFromDeck(card, deck, user)
 //ritorna tutte le carte relative al deck passato come parametro
 async function getFromDeck(deck, user)
 {
-	var q = "select * from cards where deck = ? and user = ?"
+	var q = "select * from cards where deck = ? and user = ? order by type"
 	var rows = await db.query(q, [deck, user])
 	return rows
 }
@@ -44,8 +44,9 @@ async function getSizeByType(deck, user, type)
 	var rows = await db.query(q, [deck, user, type])
 	var size = 0
 	if(rows)
-		for(i = 0; i < rows.length; i ++)
-			size +=rows[0].copies
+		for(var i = 0; i < rows.length; i ++)
+			size +=rows[i].copies
+    
 	return size
 }
 
