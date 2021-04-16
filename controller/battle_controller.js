@@ -73,15 +73,6 @@ async function battleInfo(idGame, username)
     return match
 }
 
-//ritorna il token se è presente
-async function isLogged(req, res)
-{
-    var token = await util.verifyToken(req, res)
-    if(!token)
-        res.status(401).send("sessione scaduta")
-    return token
-}
-
 async function createBattle(req, res)
 {
 	var token = await util.verifyToken(req, res)
@@ -115,7 +106,7 @@ posso anche selezionare un mazzo per un utente
 async function updateBattle(req, res)
 {
     console.log("update battle " + req.body.type)
-    if(!isLogged(req, res))
+    if(!await util.isLogged(req, res))
         return false
 	console.log(req.body.id)
 	var rows = await battle.getById(req.body.id)
@@ -199,7 +190,7 @@ async function updateBattle(req, res)
 
 async function renderBattle(req, res)
 {
-    if(!await isLogged(req, res))
+    if(!await util.isLogged(req, res))
         return false
     var match = await battleInfo(req.params.id, req.user.username)
     console.log("match")
@@ -217,7 +208,7 @@ viene chiamata appena viene effetuata una delete di un match
 async function endBattle(req, res)
 {
     //modificare la chiusra, rendere disponibile solo all'host
-    if(!await isLogged(req, res))
+    if(!await util.isLogged(req, res))
         return false
 	var match = await battle.getById(req.body.id)
 	var player = isInGame(match, req.user.username)

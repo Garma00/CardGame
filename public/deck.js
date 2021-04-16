@@ -11,7 +11,7 @@ window.onload = function()
 	
 	var ctx0 = document.getElementById('deckCards')
 	var ctx1 = document.getElementById('winRate')
-	find.addEventListener("click", search)
+	find.addEventListener("click", getCard)
 	del.addEventListener("click", deleteDeck)
 
 	var normalMonsters = parseInt(document.getElementById("normalMonsters").innerHTML)
@@ -35,68 +35,48 @@ window.onload = function()
 
 }
 
-function search()
+async function getCard()
+{
+    var deck = document.getElementById("deckId")
+    var card = await util.search()
+    var buttons = util.setSearchingZone(card)
+    buttons.insert.addEventListener('click', function(){updateDeck(card, deck.innerHTML, 0)})
+    buttons.remove.addEventListener('click', function(){updateDeck(card, deck.innerHTML, 1)})
+}
+
+/*
+0. insert a card
+1. delete a card 
+*/
+function updateDeck(result, deck, type)
 {
 	$.ajax(
 	{
-		url:"/search",
-		type:"get",
+		url:'/deck',
+		type:'put',
 		data:
 		{
-			cardName: document.getElementById("cardName").value
+			card: result,
+			deck: deck,
+			type:type
 		},
 		success: function success(result)
-		{
-			var preview = document.getElementById("preview")
-			var img = document.createElement('IMG')
-			var buttonsSpan = document.getElementById("buttonsSpan")
-			var deck = document.getElementById("deckId").innerHTML
-			var insert = document.createElement("BUTTON")
-			var remove = document.createElement("BUTTON")
-			var atkPreview = document.createElement("H4")
-			var t0 = document.createTextNode("ATK " + result.atk)
-			
-			var defPreview = document.createElement("H4")
-			var t1 = document.createTextNode("DEF " + result.def)
-
-			atkPreview.appendChild(t0)
-			defPreview.appendChild(t1)
-
-			img.setAttribute('src', result.card_images[0].image_url);
-			img.setAttribute('class', 'mark');
-
-			while(preview.lastElementChild)
-				preview.removeChild(preview.lastElementChild)
-		
-			preview.appendChild(img)
-			
-			if(result.atk >= 0 && result.def >= 0)
-			{
-				preview.appendChild(atkPreview)
-				preview.appendChild(defPreview)	
-			}
-							
-			
-			insert.innerHTML = "inserisci"
-			insert.className = "flow-text waves-effect waves-light deep-green lighten-1 btn z-depth-4 col s6 offset-s4"
-			insert.addEventListener("click", function(){updateDeck(result, deck, 0)})
-
-			remove.innerHTML = "rimuovi"
-			remove.className = "flow-text waves-effect waves-light deep-orange darken-4 btn z-depth-4 col s6 offset-s4"
-			remove.addEventListener("click", function(){updateDeck(result, deck, 1)})
-			if(buttonsSpan.hasChildNodes())
-			{
-				buttonsSpan.removeChild(buttonsSpan.childNodes[1])
-				buttonsSpan.removeChild(buttonsSpan.childNodes[0])
-			}
-			buttonsSpan.appendChild(insert)
-			buttonsSpan.appendChild(remove)
-
-		},
-		error: function error(obj, status, err){console.log("error" + err)}
+        {
+            if(type == 0)
+                M.toast({html: 'inserita'})
+            else if(type == 1)
+                M.toast({html: 'rimossa'})
+        },
+		//in caso di errore comunicare all'utente perchè non può aggiungere la carta
+		error: function error()
+        {
+            if(type == 0)
+                M.toast({html: 'non è possibile inserire questa carta'})
+            else if(type == 1)
+                M.toast({html: 'non è possibile rimuovere questa carta'})
+        }
 	})
 }
-
 
 function deleteDeck()
 {
@@ -118,38 +98,3 @@ function deleteDeck()
 	})
 }
 
-/*
-0. insert a card
-1. delete a card 
-*/
-function updateDeck(result, deck, type)
-{
-	$.ajax(
-	{
-		url:'/deck',
-		type:'put',
-		data:
-		{
-			card: result,
-			deck: deck,
-			type:type
-		},
-		success: function success(result)
-        {
-            console.log("prova") 
-            if(type == 0)
-                M.toast({html: 'inserita'})
-            else if(type == 1)
-                M.toast({html: 'rimossa'})
-        },
-		//in caso di errore comunicare all'utente perchè non può aggiungere la carta
-		error: function error()
-        {
-            if(type == 0)
-                M.toast({html: 'non è possibile inserire questa carta'})
-            else if(type == 1)
-                M.toast({html: 'non è possibile rimuovere questa carta'})
-        }
-	})
-
-}

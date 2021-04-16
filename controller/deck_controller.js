@@ -36,25 +36,19 @@ async function getDeck(req, res)
 async function newDeck(req, res)
 {
 	//se l'utente è loggato 
-	var token = await util.verifyToken(req, res)
-	if(!token)
-	{
-		res.status(401).send("invalid account")
-		return false;
-	}
-	
-	//se il nome del deck non è già stato preso dallo stesso utente
-	console.log("post request to /deck from --> " + req.user.username + " adding --> " + req.body.deck)
+    if(! await util.isLogged(req, res))
+        return false
 	var rows = await alreadyHave(req.body.deck, req.user.username)
-	
+    //se l'utente ha già un mazzo con questo nome ritorno errore
 	if(rows)
 	{
-		res.status(409).send("Questo nome non è più disponibile")
+		res.status(409).json({message: "nome non disponibile"})
 		return false;
 	}
+    //se il nome è disponibile ritorno il mazzo e l'utente
 	if(deck.insert(req.body.deck, req.user.username))
 	{
-        res.status(200).send({user: req.user.username, deck: req.body.deck})
+        res.status(200).json({user: req.user.username, deck: req.body.deck})
 		return true	
 	}
 	else
@@ -73,12 +67,8 @@ async function alreadyHave(name, user)
 //renderizza alla pagina con le caratteristiche del deck
 async function showDeck(req, res)
 {
-	var token = await util.verifyToken(req, res)
-	if(!token)
-	{
-		res.status(401).send("invalid account")
-		return false;
-	}
+    if(!await util.isLogged(req, res))
+        return false
 	var deckName = req.query.deckName
 	var username = req.user.username
 	console.log("get request to /mazzo from --> " + username)
@@ -108,7 +98,6 @@ async function showDeck(req, res)
     console.log("mostri con effetto --> " + effectMonsters)
     console.log("mostri tuner --> " + tunerMonsters)
 
-		
 	var obj =
 	{
 		username: req.user.username,
@@ -135,13 +124,9 @@ se l'utente è loggato allore controllo  in base al numero passato:
 */
 async function modifyDeck(req, res)
 {
-	var token = await util.verifyToken(req, res)
-	if(!token)
-	{
-		res.status(401).send("invalid account")
-		return false;
-	}
-	
+    if(!await util.isLogged(req, res))
+        return false
+
 	console.log("put request to deck from --> " + req.user.username)
 	switch(parseInt(req.body.type))
 	{
@@ -181,8 +166,6 @@ async function addCard(req, res)
 	var deck = req.body.deck
 	var username = req.user.username
 
-	console.log(toInsert.name + " " + deck + " " + username)
-
 	//controllo se la carta non è stata iserita 3 volte
 	var rows = await cards.getCardFromDeck(toInsert.name, deck, username)
 	if(rows)
@@ -212,7 +195,6 @@ async function addCard(req, res)
 	}
 	
 }
-
 
 //ritorna true se la carta è stata rimossa con successo, false viceversa
 async function removeCard(req, res)
@@ -245,13 +227,8 @@ async function removeCard(req, res)
 */
 async function deleteDeck(req, res)
 {	
-	var token = await util.verifyToken(req, res)
-	if(!token)
-	{
-		res.status(401).send("invalid account")
-		return false;
-	}
-	
+    if(!await util.isLogged(req, res))
+        return false
 	var toDelete = req.body.deck
 	var username = req.user.username
 	
@@ -268,8 +245,7 @@ async function deleteDeck(req, res)
 	}
 	else
 	{
-		console.log(username + " has not " + toDelete + " deck")
-        res.status(404).send("l'utente non possiede questo mazzo")
+        res.status(404).json({message: "l'utente non possiede questo mazzo"})
 		return true
 	}
 }

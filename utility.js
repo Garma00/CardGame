@@ -31,4 +31,12 @@ async function verifyToken(req, res)
     return false
 }
 
-module.exports = {generateToken, verifyToken}
+async function isLogged(req, res)
+{
+    var token = await verifyToken(req, res)
+    if(!token)
+        res.status(401).json({message: "sessione scaduta"})
+    return token
+}
+
+module.exports = {isLogged, generateToken, verifyToken}

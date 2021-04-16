@@ -111,13 +111,9 @@ function addDeck(deckName)
             },
             success: function success(result)
             {
-                console.log(result)
+                M.toast({html: 'deck ' + result.deck + ' aggiunto'})
                 location.reload()
             },
-            error: function error(obj, error, stat)
-            {
-                //location.reload()
-                M.toast({html: 'Impossibile aggiungere questo deck'})
-            }
+            error: function error(obj, err, stat){M.toast({html: obj.responseJSON.message})}
         })
 }
