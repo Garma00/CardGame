@@ -25,11 +25,11 @@
 			<h2>Lista deck</h2>	
 		
 			<ul id="deckList">
-				<%for (var mazzo in mazzi)
+				<%for (var deck in decks)
 				{
 					%>
 						<li>
-							<button data-target="modal_<%=mazzi[mazzo].name%>" name="deckName" class="sameSize mazzo waves-effect waves-light deep-orange lighten-1 z-depth-4 btn modal-trigger"><%=mazzi[mazzo].name%></button>	
+							<button data-target="modal_<%=decks[deck].name%>" name="deckName" class="sameSize mazzo waves-effect waves-light deep-orange lighten-1 z-depth-4 btn modal-trigger"><%=decks[deck].name%></button>	
 						</li>
 					<%
 				}%>

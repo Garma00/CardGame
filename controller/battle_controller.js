@@ -75,21 +75,14 @@ async function battleInfo(idGame, username)
 
 async function createBattle(req, res)
 {
-	var token = await util.verifyToken(req, res)
-	if(!token)
-	{
-		res.status(401).send("invalid account")
-		return false;
-	}
-
+    if(!await util.isLogged(req, res))
+        return false
 	//l'host entra in partita senza dover selezionare il mazzo
 	var result = await battle.newBattle(req.user.username)
 	if(result)
-
     {
         var match = await battle.getById(result.insertId)
-       // res.status(200).json({match: "prova"})
-        res.status(200).json({match: match[0]})
+        res.status(200).json({match: match})
         return true
     }
 	else

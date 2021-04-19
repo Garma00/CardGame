@@ -63,7 +63,11 @@ function createMatch()
             url: '/battle',
             method: 'post',
             data:{},
-            success: function success(result){window.open('/match/'+result.match.id, '_self')},
+            success: function success(result)
+            {
+                console.log("ci siamo")
+                window.open('/match/'+result.match.id, '_self')
+            },
             error: function error(){console.log("impossibile accedere alla partita")}
         })
 }

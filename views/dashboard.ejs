@@ -21,8 +21,11 @@
 		<div class="card-content blue-grey darken-3 col s5 ">
 			<center>
 			<h1 class="flow-Text"><%=username%></h1>	
-                <input type="text" id="deckName" placeholder="nome del nuovo deck" class="input-field" name="deck">
-                <button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>	
+                <input type="text" placeholder="nome del nuovo deck" class="input-field" name="deck">
+                <button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
+                <form action='tradePage' method='get'>    
+                    <button id='trade'>trade</button>
+                </form>
 			</center>	
 		</div>
 		<div class="card-content blue-grey darken-3 col s6 offset-s1">
@@ -67,9 +70,9 @@
 				
 			</table>
 			<h2>Entra in una partita</h2>
-				<input type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" id="id">
+				<input type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
 				<button id="joinGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">entra</button>
-            <button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button>
+				<button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button>
 		</center>
 	</div>
 		<h4 class="flow-text hide col s1" id="win"><%=win%></h4>
@@ -94,7 +97,7 @@
 			<h1 class="counter hide"><%=used[count]%></h1>
 		<%
 	}%>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	
 </div>
 </body>
 </html>

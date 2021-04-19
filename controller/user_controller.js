@@ -10,13 +10,12 @@ var util = require('../utility.js')
 //renderizza al profilo di un utente non loggato
 async function getProfile(req, res)
 {
-
 	var user = await getUserData(req.query.username)
-	
 	if(user)
 	{
 		console.log("reading data from " + user.username)
-		res.render('profile.ejs', user)
+		res.status(200).render('profile.ejs', user)
+        console.log('prova')
 		return true
 	}
 	else
@@ -265,7 +264,8 @@ async function deckUsed(user)
 //dopo aver raccolto tutti i dati relativi all'utente renderizzo alla dashboard
 async function dashboardPage(req, res)
 {
-	var token = await util.verifyToken(req, res)
+    if(!await util.isLogged(req, res))
+        return false
 	console.log("get request to /dashboard from user --> " + req.user.username)
 	
 	//raccolgo tutti i dati necessari
@@ -284,16 +284,7 @@ async function dashboardPage(req, res)
 		lose: lose,		//partite perse
 		used: used 		//numero di volte in cui ha usato ogni deck 
 	}
-	if(token)
-	{
-		res.status(200).render("dashboard.ejs", obj)
-		return true
-	}
-	else
-	{
-		res.status(401).json({message: "Sessione scaduta"})
-		return false
-	}
+    res.status(200).render('dashboard.ejs', obj)
 }
 
 module.exports={getProfile, getUser, startSession, newAccount, submitPage, home, dashboardPage}
