@@ -7,6 +7,8 @@ router.get('/match/:id', battle_controller.renderBattle)
 
 //ritorna dati relativi ad una battaglia
 router.get('/:username/battle', battle_controller.getUserBattles) //ritorna tutti i match di un utente
+
+router.get('/battle', battle_controller.getBattles)
 router.get('/battle/:id', battle_controller.getBattle) //ritorna il match richiesto
 router.post('/battle', battle_controller.createBattle) //ritorna il match creato
 //provvede aggiornamenti alla partita come deck in uso lp attuali e guest in partita 

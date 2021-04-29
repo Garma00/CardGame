@@ -30,6 +30,8 @@ async function getUser(req, res)
 {
     console.log("username --> " + req.params.username)
 	var response = await getUserData(req.params.username)
+    if(!response)
+        res.status(400).json({message: 'utente non presente'})
 	res.status(200).json(response)
 	return true
 }
@@ -95,7 +97,7 @@ async function newAccount(req, res)
 	if(username == null || password == null)
 	{
 		//l'utente ha lasciato almeno un campo vuoto 
-		res.status(400).json({message: "invalid username or password"})
+		res.status(400).json({message: "uno o più campi vuoti"})
 	}
 	else
 	{
@@ -122,7 +124,7 @@ async function newAccount(req, res)
 			{
 				var result = await users.insert(username, hash)
 				if(result)
-					res.status(200).json({user: result})
+					res.status(200).json({user: username})
 			}
 		}
 	}

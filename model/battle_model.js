@@ -4,6 +4,14 @@ var db = require('./db.js')
 ritorna il numero di partite che l'utente passato 
 ha giocato con il deck passato
 */
+
+async function getMatches()
+{
+	var q = 'select * from battles'
+	var matches = await db.query(q, [])
+	return matches
+}
+
 async function getByDeckUsed(deck, user)
 {
 	var q = "select * from battles where (deckHost = ? or deckGuest = ?) and (host = ? or guest = ?) and inCourse = 0"
@@ -54,7 +62,7 @@ async function getById(id)
 }
 
 //ritorna tutte le partite relative ad un utente
-async function getMatches(username)
+async function getUserMatches(username)
 {
     var q = "select * from battles where host = ? or guest = ?"
     var matches = await db.query(q, [username, username])
@@ -161,5 +169,6 @@ module.exports=
 	getWinWithDeck,
 	getLoseWithDeck,
 	getByDeckUsed,
+	getUserMatches,
     getMatches
 }

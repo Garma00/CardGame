@@ -16,17 +16,20 @@
 </head>    
 <div class="container">
 <body class='blue-grey darken-4'>
-    <input id='owner' placeholder='nome proprietario'></input>
-    <input id='card' placeholder='nome carta'></input>
-    <button id='find'>cerca</button> 
-
-    <input id='message' placeholder='messaggio'></input>
-    <input id='toInsert' placeholder='nome carta'></input>
-    <button id='insert'>inserisci</button> 
-
-    <input id='toDel' placeholder='id trade'></input>
-    <button id='remove'>elimina</button>
-
+    <div class='row card-content blue-grey darken-4'>
+        <input class='col s4' id='owner' placeholder='nome proprietario'></input>
+        <input class='col s4 offset-s1' id='card' placeholder='nome carta'></input>
+        <button class='waves-effect waves-light deep-orange lighten-1 btn z-depth4 col s2 offset-s1' id='find'>cerca</button> 
+    </div>
+    <div class = 'row card-content blue-grey darken-4'>
+        <input class='col s4' id='message' placeholder='messaggio'></input>
+        <input class='col s4 offset-s1' id='toInsert' placeholder='nome carta'></input>
+        <button class='waves-effect waves-light deep-orange lighten-1 btn z-depth4 col s2 offset-s1' id='insert'>inserisci</button> 
+    </div>
+    <div class='row card-content blue-grey darken-4'>
+        <input class='col s9' id='toDel' placeholder='id trade'></input>
+        <button class='waves-effect waves-light deep-orange lighten-1 btn z-depth4 col s2 offset-s1' id='remove'>elimina</button>
+    </div>
     <table id='table' class='centered blue-grey darken-3 z-depth-4 cardList'></table>
 </body>
 </div>

@@ -9,7 +9,7 @@ window.onload = function()
     var createGame = document.getElementById("createGame")
     createGame.addEventListener("click", createMatch)
 
-    var deckName = document.getElementById("deckName")
+    var deckName = document.getElementById("deck")
     var newDeck = document.getElementById("newDeck")
     newDeck.addEventListener("click", function(){addDeck(deckName.value)})
     /*

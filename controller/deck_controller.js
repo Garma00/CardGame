@@ -5,8 +5,20 @@ var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
 var battle = require('../model/battle_model.js')
 
-//ritorna tutti i deck dell'utente
 async function getDecks(req, res)
+{
+	var decks = await deck.getAll()
+	if(!decks)
+	{
+		res.status(404).json({message: "nessun mazzo trovato"})
+		return false
+	}
+	res.status(200).json({decks: decks})	
+	return true
+}
+
+//ritorna tutti i deck dell'utente
+async function getUserDecks(req, res)
 {
     console.log(req.params.username)
     var decks = await deck.getOwnersDeck(req.params.username)
@@ -275,4 +287,4 @@ async function findCardByName(req, res)
 	})
 }
 
-module.exports = {getDecks, getDeck, newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}
+module.exports = {getDecks, getUserDecks, getDeck, newDeck, alreadyHave, findCardByName, showDeck, modifyDeck, deleteDeck}

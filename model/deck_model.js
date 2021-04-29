@@ -1,5 +1,12 @@
 var db = require('./db.js')
 
+async function getAll()
+{
+	var q = 'select * from decks'
+	var decks = await(db.query(q, []))
+	return decks
+}
+
 async function getByNameAndOwner(name, owner)
 {
 	var q = "select * from decks where name = ? and owner = ?"
@@ -39,4 +46,4 @@ async function getOwnersDeck(owner)
 	return rows
 }
 
-module.exports={getByName, insert, getOwnersDeck, del, getByNameAndOwner}
+module.exports={getAll, getByName, insert, getOwnersDeck, del, getByNameAndOwner}

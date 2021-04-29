@@ -23,8 +23,6 @@ async function getTrades(req, res)
 //aggiunge un nuovo trade e lo ritorna
 async function newTrade(req, res)
 {
-    console.log("new trade")
-    console.log(req.body.card, req.body.message)
     if(!await util.isLogged(req, res))
         return false
     if(!req.body.card || !req.body.message)

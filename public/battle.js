@@ -38,7 +38,7 @@ function updateMatch(type, deckName)
 	var amount = document.getElementById("amount").value
 	var id = document.getElementById("id").innerHTML
 	if(deckName)
-		var deck = deckName.innerHTML
+		var deck = deckName.innerText
 	console.log(deck)
 	$.ajax(
 	{

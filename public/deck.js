@@ -97,4 +97,3 @@ function deleteDeck()
 		error: function error(){console.log("delete deck error")}
 	})
 }
-

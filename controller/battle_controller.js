@@ -3,10 +3,22 @@ var util = require('../utility.js')
 var battle = require('../model/battle_model.js')
 var deck = require('../model/deck_model.js')
 
+async function getBattles(req, res)
+{
+	var matches = await battle.getMatches()
+	if(!matches)
+	{
+		res.status(404).json({message: 'nessun match trovato'})
+		return false
+	}
+	res.status(200).json({matches: matches})
+	return true
+}
+
 //ritorna tutti i match di un utente
 async function getUserBattles(req, res)
 {
-    var matches = await battle.getMatches(req.params.username)
+    var matches = await battle.getUserMatches(req.params.username)
     if(!matches)
     {
         res.status(404).json({message: "nessuna partita trovata"})
@@ -128,38 +140,61 @@ async function updateBattle(req, res)
 		case 0:
 			var result = await battle.heal(amount, id, lp)
 			if(result)
+			{
+				res.status(200).json({message: 'punti vita aggiornati'})
 				return true
+			}
 			else
+			{
+				res.status(400).json({message: 'punti vita non aggiornati'})
 				return false
+			}
 			break;
 
 		case 1:
 
 			var result = await battle.hit(amount, id, lp)
 			if(result)
+			{
+				res.status(200).json({message: 'punti vita aggiornati'})
 				return true
+			}
 			else
+			{
+				res.status(400).json({message: 'punti vita non aggiornati'})
 				return false
+			}
 			break;
 
 		case 2:
 
 			var result = await battle.divide(amount, id, lp)
 			if(result)
+			{
+				res.status(200).json({message: 'punti vita aggiornati'})
 				return true
+			}
 			else
+			{
+				res.status(400).json({message: 'punti vita non aggiornati'})
 				return false
+			}
 			break;
 
 		case 3:
 			var result = await battle.setDeck(id, req.body.deck, toUpdate)
 			if(result)
+			{
+				res.status(200).json({message: 'mazzo aggiornato'})
 				return true
+			}
 			else
+			{
+				res.status(200).json({message: 'mazzo non aggiornato'})
 				return false
+			}
 			break;
         case 4:
-            console.log("case 4")
             var match = await join(username, id)
             if(match)
             {
@@ -168,13 +203,13 @@ async function updateBattle(req, res)
             }
            else
             {
-                res.status(400).json({message: 'error!'})
+                res.status(400).json({message: 'errore'})
                 return false
             }
             break;
 //aggiungere case join user
 		default:
-            console.log("default")
+			res.status(400).json({message: 'tipo di aggiornamento non trovato'})
 			return false;
 			break;
 	}
@@ -205,13 +240,13 @@ async function endBattle(req, res)
         return false
 	var match = await battle.getById(req.body.id)
 	var player = isInGame(match, req.user.username)
-    console.log(player)
     /*
         solo l'host può chiudere la partita, in questo modo se chi chiama la delete
         è l'host chiudo la partita e ritorno il match che è stato appena chiuso
     */
 	if(player == "host")
     {
+        await setWinner(match)
         await battle.close(req.body.id)
         res.status(200).json(match)
     }
@@ -249,4 +284,4 @@ async function setWinner(match)
 	await battle.setWinner(match.id, winner, loser)
 }
 
-module.exports={renderBattle, getUserBattles, getBattle, join, createBattle, updateBattle, endBattle}
+module.exports={getBattles, renderBattle, getUserBattles, getBattle, join, createBattle, updateBattle, endBattle}
