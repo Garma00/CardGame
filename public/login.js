@@ -6,9 +6,16 @@ window.onload = function()
     signIn.addEventListener("click", function(){login(username, password)})
 }
 
-//post /login
+/*
+	se il login va a buon fine si passa alla dashboard dell'utente
+*/
 function login(username, password)
 {
+	if(!username || !password)
+	{
+		M.toast({html: "riempi tutti i campi"})
+		return false
+	}
     $.ajax(
         {
             url: 'login',

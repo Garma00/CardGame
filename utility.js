@@ -7,7 +7,7 @@ function generateToken(res, username)
     expiresIn: process.env.DB_ENV === 'testing' ? '1d' : '7d',
   })
   return res.cookie('token', token, {
-    expires: new Date(Date.now() + (1000*60*30)),
+    expires: new Date(Date.now() + (1000*60*240)),
     secure: false, // set to true if your using https
     httpOnly: true,
 

@@ -5,6 +5,7 @@ var deck = require('../model/deck_model.js')
 var cards = require('../model/cards_model.js')
 var battle = require('../model/battle_model.js')
 
+//ritorna tutti i deck
 async function getDecks(req, res)
 {
 	var decks = await deck.getAll()
@@ -36,15 +37,12 @@ async function getDeck(req, res)
 {
 	console.log(req.params.deck)
 	console.log(req.params.username)
-	var response =
-	{
-		cards: await cards.getFromDeck(req.params.deck, req.params.username)	
-	} 
+	var response = {cards: await cards.getFromDeck(req.params.deck, req.params.username)} 
 	console.log("response")
-	console.log(response)
 	res.status(200).json(response)
 }
 
+//crea un nuovo mazzo e lo ritorna con l'utente che ne è proprietario
 async function newDeck(req, res)
 {
 	//se l'utente è loggato 
@@ -102,13 +100,6 @@ async function showDeck(req, res)
 	var tunerMonsters = await cards.getSizeByType(deckName, username, "tuner monster")
 	var win =  await battle.getWinWithDeck(deckName, username)
 	var lose =  await battle.getLoseWithDeck(deckName, username)
-
-    console.log("mostri extra deck -->" + extraMonsters)
-    console.log("magie --> " + spells)
-    console.log("trappole --> " + traps)
-    console.log("mostri normali --> " + normalMonsters)
-    console.log("mostri con effetto --> " + effectMonsters)
-    console.log("mostri tuner --> " + tunerMonsters)
 
 	var obj =
 	{

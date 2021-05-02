@@ -3,6 +3,7 @@ var util = require('../utility.js')
 var battle = require('../model/battle_model.js')
 var deck = require('../model/deck_model.js')
 
+//ritorna tutti i match
 async function getBattles(req, res)
 {
 	var matches = await battle.getMatches()
@@ -28,6 +29,7 @@ async function getUserBattles(req, res)
 
 }
 
+//ritorna il match con id passato
 async function getBattle(req, res)
 {
     var match = await battle.getById(req.params.id)
@@ -40,7 +42,6 @@ async function getBattle(req, res)
     return true
 }
 
-//capire perchè non viene eseguita questa funzione
 async function join(username, id)
 {
     var match = await battleInfo(id, username)
@@ -85,6 +86,7 @@ async function battleInfo(idGame, username)
     return match
 }
 
+//crea un nuovo match e lo ritorna 
 async function createBattle(req, res)
 {
     if(!await util.isLogged(req, res))
@@ -207,7 +209,7 @@ async function updateBattle(req, res)
                 return false
             }
             break;
-//aggiungere case join user
+
 		default:
 			res.status(400).json({message: 'tipo di aggiornamento non trovato'})
 			return false;
@@ -216,6 +218,7 @@ async function updateBattle(req, res)
 	return true
 }
 
+//renderizza alla pagina del match
 async function renderBattle(req, res)
 {
     if(!await util.isLogged(req, res))
@@ -230,6 +233,7 @@ async function renderBattle(req, res)
     }
     res.status(400).json({message: "errore impossibile accedere alla partita"})
 }
+
 /*
 viene chiamata appena viene effetuata una delete di un match
 */

@@ -3,7 +3,6 @@ var db = require('./db.js')
 //ritorna tutti i trade
 async function getTrades(user, card)
 {
-
     var  q = 'select * from trade where '
     var trades = null
     if(user && card)
@@ -29,6 +28,7 @@ async function getTrades(user, card)
     return trades
 }
 
+//ritorna tutti i trade dell'utente
 async function getUserTrades(user)
 {
     var q = 'select * from trade where user = ?'
@@ -36,6 +36,7 @@ async function getUserTrades(user)
     return trades
 }
 
+//ritorna il trade con l'id passato
 async function getById(id)
 {
     var q = 'select * from trade where id = ?'
@@ -45,6 +46,7 @@ async function getById(id)
     return null
 }
 
+//aggiunge un nuovo trade
 async function addTrade(user, card, message)
 {
     var q = 'insert into trade (user, card, message) values(?, ?, ?)'
@@ -52,6 +54,7 @@ async function addTrade(user, card, message)
     return result
 }
 
+//rimuove il trade
 async function deleteTrade(id)
 {
     var q = 'delete from trade where id = ?'

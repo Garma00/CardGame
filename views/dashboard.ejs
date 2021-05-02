@@ -20,7 +20,7 @@
 	<div class="row">
 		<div class="card-content blue-grey darken-3 col s5 ">
 			<center>
-			<h1 class="flow-Text"><%=username%></h1>	
+			<h5 class="card-title"><%=username%></h5>	
                 <input type="text" placeholder="nome del nuovo deck" class="input-field" id="deck">
                 <button id="newDeck" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">Nuovo</button>
                 <form action='tradePage' method='get'>    
@@ -47,7 +47,7 @@
 	<div class="row blue-grey darken-3 z-depth-4">
 		<center>
 			<h2>Ultime partite</h2>
-			<table class="centered blue-grey darken-3 z-depth-4 col s10 offset-s1">
+			<table class="responsive-table blue-grey darken-3 z-depth-4 col s10 offset-s1">
 				<tr>
 					<th class="deep-orange darken-4">host</th>
 					<th class="deep-orange darken-4">guest</th>
@@ -70,7 +70,7 @@
 				
 			</table>
 			<h2>Entra in una partita</h2>
-				<input id='id' type="text" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
+				<input id='id' type="number" class="input-field col s6 offset-s2" placeholder="Inserisci l'id della partita" name="id">
 				<button id="joinGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">entra</button>
 				<button id="createGame" class="waves-effect waves-light deep-orange lighten-1 btn z-depth-4">nuova partita</button>
 		</center>

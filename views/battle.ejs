@@ -18,15 +18,15 @@
 	<center><br>
 		<div class="row">
 			<div class="blue-grey darken-2 z-depth-4 col s4">
-				<h4 id="host" class="flow-text"><%=host%></h4>
-				<h5><%=deckHost%></h5>
+				<h5 id="host" class="flow-text"><%=host%></h5>
+				<h5 class="flow-text"><%=deckHost%></h5>
 			</div>
 			<div class="blue-grey darken-2 z-depth-4 col s2 offset-s1">
 				<h4 class="flow-text">VS</h4>
 			</div>
 			<div class="blue-grey darken-2 z-depth-4 col s4 offset-s1">
-				<h4 id="guest" class="flow-text"><%=guest%></h4>
-				<h5><%=deckGuest%></h5>
+				<h5 id="guest" class="flow-text"><%=guest%></h5>
+				<h5 class="flow-text"><%=deckGuest%></h5>
 			</div>
 		</div>
 
@@ -36,12 +36,12 @@
 		</div>
 		
 		<div class="row">
-			<input type="text" placeholder="amount" name="amount" id="amount" class="input-field col s6 offset-s3">
+			<input type="number" placeholder="amount" name="amount" id="amount" class="input-field col s6 offset-s3">
 		</div>
 		<div class="row">
-			<button id="heal" class="waves-effect waves-light deep-green lighten-1 z-depth-4 btn">+</button>
-			<button id="hit" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn">-</button>
-			<button id="divide" class="waves-effect waves-light red lighten-1 z-depth-4 btn z-depth-4">/</button>
+			<button id="heal" class="waves-effect waves-light deep-green col s3 offset-s1 lighten-1 z-depth-4 btn">+</button>
+			<button id="hit" class="waves-effect waves-light deep-orange col s3 offset-s1 lighten-1 z-depth-4 btn">-</button>
+			<button id="divide" class="waves-effect waves-light red col s3 offset-s1 lighten-1 z-depth-4 btn z-depth-4">/</button>
 		</div>
 		<h4><span id="randomN"></span></h4>
 		<button id="d6" class="waves-effect waves-light deep-orange lighten-1 z-depth-4 btn z-depth-4">rand</button>

@@ -5,15 +5,18 @@ window.onload = function()
 	var find = document.getElementById("find")
 	var del = document.getElementById("delete")
 
+	//array contenente il numero di vittorie ed il numero di sconfitte
 	var winVsLose = []
 	winVsLose[0] = document.getElementById("win").innerHTML
 	winVsLose[1] = document.getElementById("lose").innerHTML
 	
+	//ctx0 ed 1 servono per la creazione dei grafici
 	var ctx0 = document.getElementById('deckCards')
 	var ctx1 = document.getElementById('winRate')
 	find.addEventListener("click", getCard)
 	del.addEventListener("click", deleteDeck)
 
+	//ottengo il numero di carte per ogni tipo
 	var normalMonsters = parseInt(document.getElementById("normalMonsters").innerHTML)
 	var tunerMonsters = parseInt(document.getElementById("tunerMonsters").innerHTML)
 	var effectMonsters = parseInt(document.getElementById("effectMonsters").innerHTML)
@@ -30,15 +33,18 @@ window.onload = function()
 	labels[2] = "trappole"
 	labels[3] = "mostri"
 	
+	//creo i due grafici
 	var deckCards = new Chart(ctx0, util.createChart("doughnut", labels, cardType))
 	var winRate = new Chart(ctx1, util.createChart("doughnut", ['vittorie', 'sconfitte'], winVsLose))
-
 }
 
+//ottengo la carta dal servizio e la mostro insieme ai bottoni per aggiungerla o rimuoverla
 async function getCard()
 {
     var deck = document.getElementById("deckId")
     var card = await util.search()
+	if(!card)
+		M.toast({html: "nome errato"})
     var buttons = util.setSearchingZone(card)
     buttons.insert.addEventListener('click', function(){updateDeck(card, deck.innerHTML, 0)})
     buttons.remove.addEventListener('click', function(){updateDeck(card, deck.innerHTML, 1)})

@@ -40,6 +40,7 @@ async function newTrade(req, res)
     return false
 }
 
+//renderizza alla pagina dei trade
 async function tradePage(req, res)
 {
     if(!await util.isLogged(req, res))

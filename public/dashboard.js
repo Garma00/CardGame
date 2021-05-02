@@ -63,20 +63,22 @@ function createMatch()
             url: '/battle',
             method: 'post',
             data:{},
-            success: function success(result)
-            {
-                console.log("ci siamo")
-                window.open('/match/'+result.match.id, '_self')
-            },
+            success: function success(result){window.open('/match/'+result.match.id, '_self')},
             error: function error(){console.log("impossibile accedere alla partita")}
         })
 }
 
+/*
+	la funzione viene chiamata quando un utente vuoi entrare in una partita
+	già esistente, se il posto è libero o lui già è host o guest allora parte la success
+*/
 function join(idGame)
 {
-    //var request = '/match/'+idGame
-    //window.open(request, '_self')
-    console.log(idGame)
+	if(!idGame)
+	{
+		M.toast({html: "inserisci l'id"})
+		return false
+	}
     $.ajax(
         {
             url: '/battle',
@@ -102,9 +104,17 @@ function decks()
 	window.open('/mazzo'+param, "_self")
 }
 
+/*
+viene chiamata se l'utente vuole creare un nuovo mazzo, 
+se viene creato con successo allora parte la success
+*/
 function addDeck(deckName)
 {
-    console.log("adding deck --> " + deckName)
+	if(!deckName)
+	{
+		M.toast({html: "inserisci il nome del deck"})
+		return false
+	}
     $.ajax(
         {
             url: '/deck',

@@ -1,5 +1,6 @@
 var db = require('./db.js')
 
+//ritorna tutti i deck
 async function getAll()
 {
 	var q = 'select * from decks'
@@ -7,6 +8,8 @@ async function getAll()
 	return decks
 }
 
+//ritorna il deck richiesto, ogni deck è identificato univocamente da
+//nome del proprietario e nome del deck
 async function getByNameAndOwner(name, owner)
 {
 	var q = "select * from decks where name = ? and owner = ?"
@@ -14,7 +17,7 @@ async function getByNameAndOwner(name, owner)
 	return rows
 }
 
-//elimino il deck
+//elimina il deck
 async function del(name, owner)
 {
 	var q = "delete from decks where name = ? and owner = ?"

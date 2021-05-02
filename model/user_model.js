@@ -1,5 +1,6 @@
 var db = require('./db.js')
 
+//ritorna l'user  passato
 async function getByUsername(username)
 {
 	var q = "select * from users where username = ?"
@@ -7,6 +8,7 @@ async function getByUsername(username)
 	return rows
 }
 
+//inserisce un nuovo user
 async function insert(username, password)
 {
 	var q = "insert into users (username, password) values (?, ?)"

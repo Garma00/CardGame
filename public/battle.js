@@ -52,7 +52,7 @@ function updateMatch(type, deckName)
 			type: type
 		},
 		//potrei in caso di successo aggiornare la pagina
-		success: function success(result){console.log(result)},
+		success: function success(result){window.open('/match/'+id, '_self')},
 		error: function error(r, e, s){console.log(e + " " + s)
 		console.log(r)}
 	})
@@ -61,7 +61,11 @@ function updateMatch(type, deckName)
 function closeMatch()
 {
 	var id = document.getElementById("id").innerHTML
-	console.log(id)
+	if(!id)
+	{
+		M.toast({html: "inserisci l'id"})
+		return false
+	}
 	$.ajax(
 	{
 		url: '/battle',

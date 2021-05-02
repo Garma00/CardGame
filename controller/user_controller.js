@@ -36,6 +36,7 @@ async function getUser(req, res)
 	return true
 }
 
+//ritorna un ogetto contenente tutte le informazioni dell'utente passato come parametro
 async function getUserData(username)
 {
 	var user = await users.getByUsername(username)
@@ -166,13 +167,11 @@ chiamata per eseguire il login dell'utente
 2.controllo che username e password siano corretti
 3.se va tutto bene ritorno il token
 */
-
 async function startSession(req, res)
 {
 	var username = req.body.username
 	var password = req.body.password
 	console.log("Post request to login")
-
 
     var rows = await users.getByUsername(username)
     if(rows)
@@ -196,7 +195,6 @@ async function startSession(req, res)
         res.status(401).json({message: "invalid account"})
         return false
     }
-
 }
 
 /*prende in input plain text e digest, ritorna true o false se 

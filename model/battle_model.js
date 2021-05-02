@@ -12,6 +12,7 @@ async function getMatches()
 	return matches
 }
 
+//ritorna tutti i match in cui l'utente passato ha utilizzato il mazzo passato
 async function getByDeckUsed(deck, user)
 {
 	var q = "select * from battles where (deckHost = ? or deckGuest = ?) and (host = ? or guest = ?) and inCourse = 0"
@@ -22,6 +23,7 @@ async function getByDeckUsed(deck, user)
 		return 0
 }
 
+//ritorna tutte le vittorie dell'utente passato con il deck passato
 async function getWinWithDeck(deck, user)
 {
 	var q = "select * from battles where winner = ? and (deckHost = ? or deckGuest = ?)"
@@ -30,6 +32,7 @@ async function getWinWithDeck(deck, user)
 		return rows.length
 }
 
+//ritorna tutte le sconfitte dell'utente passaco con il deck passato
 async function getLoseWithDeck(deck, user)
 {
 	var q = "select * from battles where loser = ? and (deckHost = ? or deckGuest = ?)"
@@ -38,6 +41,7 @@ async function getLoseWithDeck(deck, user)
 		return rows.length
 }
 
+//ritorna tutte le vittorie di un utente
 async function getWin(user)
 {
 	var q = "select * from battles where winner = ?"
@@ -46,6 +50,7 @@ async function getWin(user)
 		return rows.length
 }
 
+//ritorna tutte le sconfitte di un utente
 async function getLose(user)
 {
 	var q = "select * from battles where loser = ?"
@@ -54,6 +59,7 @@ async function getLose(user)
 		return rows.length
 }
 
+//ritorna il match con id passato
 async function getById(id)
 {
 	var q = "select * from battles where id = ?"
@@ -77,6 +83,7 @@ async function getEndedGames(user)
 	return rows
 }
 
+//crea una nuova partita
 async function newBattle(host)
 {
 	var q = "insert into battles (host) values(?)"
@@ -84,6 +91,7 @@ async function newBattle(host)
 	return result
 }
 
+//permette al guest di entrare nella partita passata
 async function joinGuest(guest, id)
 {
 	var q = "update battles set guest = ? where id = ?"
@@ -136,20 +144,6 @@ async function setDeck(id, deck, toUpdate)
 	var q = "update battles set " + toUpdate +" = ? where id = ?"
 	var result = await db.query(q, [deck, id])
 	return result
-}
-
-async function getHost(id)
-{
-    var q = "select host from battles where id = ?"
-    var rows = await db.query(q, [id])
-    return rows[0].host
-}
-
-async function getGuest(id)
-{
-    var w = "select guest from battles where id = ?"
-    var rows = await db.query(q, [id])
-    return rows[0].guest
 }
 
 module.exports=
