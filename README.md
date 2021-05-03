@@ -17,7 +17,7 @@ request http://localhost:3000/jack/battle
 * success response(200):  
 ```json
 	{  
-		"matches": [...]  
+		"matches": []  
 	}  
 ```
 * failure response(404):  
@@ -223,14 +223,14 @@ curl -X PUT http://localhost:3000/battle
 * success response(200)  
 ```json
 	{
-		{"message": "punti vita aggiornati"}	//case 0, 1, 2
+		{"message": "punti vita aggiornati"},	//case 0, 1, 2
 		{"message": "mazzo aggiornato"}			//case 3
 		{"match":
 			{
 				"id": 10,
 				"host": "jack",
 				"guest": "prova",
-				...
+				
 			}}
 	}
 ```  
@@ -274,7 +274,7 @@ http://localhost:3000/trade
 			"card": "prova",
 			"message": "scambio"
 		}
-		...
+		
 	}
 ```  
 * failure response(404)  
@@ -297,7 +297,7 @@ curl -X POST http://localhost:3000/trade
 			"id": 1,
 			"user": "prova",
 			"card": "tuning",
-			"message": scambio
+			"message": "scambio"
 		}
 	}
 ```  
@@ -319,7 +319,7 @@ curl -X DELETE -d'id=1' http://localhost:3000/battle
 		"insertId": 0,
 		"serverStatus": 34,
 		"warningCount": 0,
-		"message": '',
+		"message": "",
 		"protocol41": true,
 		"changedRows": 0
 	}
