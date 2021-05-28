@@ -58,13 +58,15 @@ async function search()
         {
             url:"/search",
             type:"get",
-            data: {cardName: document.getElementById("cardName").value},
+			data:
+			{
+				cardName: document.getElementById("cardName").value,
+				IDcard: document.getElementById('IDcard').value
+			},
             success: function success(result){
-                console.log(result)
                 return resolve(result)},
             error: function error(obj, status, err)
             {
-                console.log("promessa non mantenuta")
                 return reject(err)
             }
         })

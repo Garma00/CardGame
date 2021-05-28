@@ -2,6 +2,13 @@ import * as util from './utility.js'
 
 window.onload = function()
 {
+	//selezionano l'ordine in cui vengono inserite le carte
+	var AZ = document.getElementById('A-Z')
+	var type = document.getElementById('type')
+
+	AZ.addEventListener('click', function(){orderBy(0)})
+	type.addEventListener('click', function(){orderBy(1)})
+
 	var find = document.getElementById("find")
 	var del = document.getElementById("delete")
 
@@ -102,4 +109,16 @@ function deleteDeck()
         },
 		error: function error(){console.log("delete deck error")}
 	})
+}
+
+function orderBy(caso)
+{
+	$.ajax(
+		{
+			url: '/mazzo',
+			type: 'get',
+			data: {caso: caso},
+			success: function(){M.toast({html: 'ordinamento eseguito'})},
+			error: function(){M.toast({html: "impossibile eseguire l'ordinamento"})}
+		})
 }

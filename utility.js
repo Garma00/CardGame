@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const dotenv = require('dotenv').config()
+const fs = require('fs')
 
 function generateToken(res, username)
 {
@@ -18,17 +19,14 @@ async function verifyToken(req, res)
 {
     const token = req.cookies.token || ''
     if (!token)
-        return false
+        return false;
     const decrypt = await jwt.verify(token, "chiavesegretissima")
     if(decrypt)
     {
-        req.user = 
-        {
-            username: decrypt.username
-        }
-        return true
+        req.user = {username: decrypt.username}
+        return true;
     }
-    return false
+    return false;
 }
 
 async function isLogged(req, res)
@@ -39,5 +37,16 @@ async function isLogged(req, res)
     return token
 }
 
+//stampa su console la richiesta ricevuta
+function trackRequest(endpoint, req)
+{
+	let data = new Date().toString();
+	let username;
+	if(!req.user)
+		username = 'unkown';
+	else
+		username = req.user.username;
+	console.log('\033[0;35m' + username + " " + req.method + " to " + endpoint + ' ' + data + '\033[0m');
+}
 
-module.exports = {isLogged, generateToken, verifyToken}
+module.exports = {isLogged, generateToken, verifyToken, trackRequest}

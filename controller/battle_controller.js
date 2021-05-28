@@ -6,6 +6,7 @@ var deck = require('../model/deck_model.js')
 //ritorna tutti i match
 async function getBattles(req, res)
 {
+	util.trackRequest('/battle', req)
 	var matches = await battle.getMatches()
 	if(!matches)
 	{
@@ -19,6 +20,8 @@ async function getBattles(req, res)
 //ritorna tutti i match di un utente
 async function getUserBattles(req, res)
 {
+	util.trackRequest('/:username/battle', req)
+	var matches = await battle.getMatches()
     var matches = await battle.getUserMatches(req.params.username)
     if(!matches)
     {
@@ -32,6 +35,8 @@ async function getUserBattles(req, res)
 //ritorna il match con id passato
 async function getBattle(req, res)
 {
+	util.trackRequest('/battle/:id', req)
+	var matches = await battle.getMatches()
     var match = await battle.getById(req.params.id)
     if(!match)
 	{
@@ -46,13 +51,9 @@ async function join(username, id)
 {
     var match = await battleInfo(id, username)
     if((match.host == username || match.guest == username) && match.inCourse == 1)
-    {
-        console.log("sei host o guest")
         return match
-    }
     else if(match.guest == 'waiting')
     {
-        console.log("sei guest")
         var result = await battle.joinGuest(username, id)
         var match = await battleInfo(id)
         if(!result)
@@ -70,7 +71,6 @@ async function battleInfo(idGame, username)
         var decks = await deck.getOwnersDeck(username)
     else if(username == rows.guest)
         var decks = await deck.getOwnersDeck(username)
-    console.log(decks)
     var match =
         {
             id: rows.id,
@@ -91,6 +91,7 @@ async function createBattle(req, res)
 {
     if(!await util.isLogged(req, res))
         return false
+	util.trackRequest('/battle', req)
 	//l'host entra in partita senza dover selezionare il mazzo
 	var result = await battle.newBattle(req.user.username)
 	if(result)
@@ -112,10 +113,9 @@ posso anche selezionare un mazzo per un utente
 */
 async function updateBattle(req, res)
 {
-    console.log("update battle " + req.body.type)
     if(!await util.isLogged(req, res))
         return false
-	console.log(req.body.id)
+	util.trackRequest('battle', req)
 	var rows = await battle.getById(req.body.id)
     var username = req.user.username
 
@@ -128,7 +128,6 @@ async function updateBattle(req, res)
 	else if(username == rows.guest)
 	{
 		var toUpdate = "deckGuest"
-        console.log("username = guest")
 		var lp = "lpGuest"
 	}
 
@@ -223,9 +222,8 @@ async function renderBattle(req, res)
 {
     if(!await util.isLogged(req, res))
         return false
+	util.trackRequest('/match/:id', req)
     var match = await battleInfo(req.params.id, req.user.username)
-    console.log("match")
-    console.log(match)
     if(match)
     {
         res.status(200).render('battle.ejs', match)
@@ -242,6 +240,7 @@ async function endBattle(req, res)
     //modificare la chiusra, rendere disponibile solo all'host
     if(!await util.isLogged(req, res))
         return false
+	util.trackRequest('/battle', req)
 	var match = await battle.getById(req.body.id)
 	var player = isInGame(match, req.user.username)
     /*
@@ -275,8 +274,6 @@ function isInGame(match, player)
 //calcola chi ha più punti vita e setta winner e loser
 async function setWinner(match)
 {
-
-
 	var winner = match.host
 	var loser = match.guest
 	if(match.lpHost < match.lpGuest)
@@ -284,7 +281,6 @@ async function setWinner(match)
 		winner = match.guest
 		loser = match.host
 	}
-
 	await battle.setWinner(match.id, winner, loser)
 }
 

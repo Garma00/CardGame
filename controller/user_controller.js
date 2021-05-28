@@ -10,12 +10,12 @@ var util = require('../utility.js')
 //renderizza al profilo di un utente non loggato
 async function getProfile(req, res)
 {
+	await util.isLogged(req, res)
+	util.trackRequest('/profile', req)
 	var user = await getUserData(req.query.username)
 	if(user)
 	{
-		console.log("reading data from " + user.username)
 		res.status(200).render('profile.ejs', user)
-        console.log('prova')
 		return true
 	}
 	else
@@ -28,7 +28,7 @@ async function getProfile(req, res)
 //restituisce l'utente rischiesto sotto forma di json
 async function getUser(req, res)
 {
-    console.log("username --> " + req.params.username)
+	util.trackRequest('/user', req)
 	var response = await getUserData(req.params.username)
     if(!response)
         res.status(400).json({message: 'utente non presente'})
@@ -44,14 +44,11 @@ async function getUserData(username)
 		return false
 	var decks = await deck.getOwnersDeck(username)
 	var array = []
-	console.log("username")
-	console.log(user[0].username)
 	//per ogni mazzo creo un ogetto contenente il nome e la lista di carte
 	if(decks)
 	{
 		for(var i = 0; i < decks.length; i++)
 		{
-
 			var rows = await card.getFromDeck(decks[i].name, user[0].username)
 			var obj=
 			{
@@ -78,8 +75,6 @@ async function getUserData(username)
 		used: used,
 		decks: array
 	}
-	console.log("info carta")
-	console.log(array)
 
 	return user
 }
@@ -93,6 +88,7 @@ altrimenti ritorno al profilo dell'utente)
 */
 async function newAccount(req, res)
 {
+	util.trackRequest('/user', req)
 	var username = req.body.username
 	var password = req.body.password
 	if(username == null || password == null)
@@ -106,18 +102,14 @@ async function newAccount(req, res)
 		if(rows)
 		{
 			//username già preso
-			//redirect a submit.ejs
-            console.log(username + " già preso")
 			res.status(410).json({message: "username già preso"})
 		}
 		else
 		{
 			//username disponibile, inserisco l'utente nel db
 			var hash = await hashPassword(password)
-			
 			if(hash == null)
 			{
-				console.log("cannot hash password")
                 res.status(400).json({message: "impossibile registrarsi, riprova."})
 				return false;
 			}
@@ -144,7 +136,6 @@ async function hashPassword(password)
 			else
 			{
 				password = hash;
-				console.log("hashPassword --> " + password)
 				return resolve(password)
 			}
 		})
@@ -152,12 +143,11 @@ async function hashPassword(password)
 	try
 	{
 		var pw = await p
-		console.log("promessa mantenuta")
 		return pw
 	}
 	catch(err)
 	{
-		console.log("promessa non mantenuta --> " + err)
+		console.log("hash password fallito " + err)
 	}
 }
 
@@ -169,10 +159,10 @@ chiamata per eseguire il login dell'utente
 */
 async function startSession(req, res)
 {
+	
 	var username = req.body.username
 	var password = req.body.password
-	console.log("Post request to login")
-
+	util.trackRequest('/login', req)
     var rows = await users.getByUsername(username)
     if(rows)
     {
@@ -205,7 +195,6 @@ async function comparePw(password, hash)
 	{
 		bcrypt.compare(password, hash, function(err, result)
 		{
-			console.log("result --> " + result)
 			if(err)
 				console.log("impossibile il controllo tra password --> " + err)
 			if(result)
@@ -229,14 +218,14 @@ async function comparePw(password, hash)
 function submitPage(req, res)
 {
 	//ritorno la pagina di submnit
-	console.log("get request to submit")
+	util.trackRequest('/submit', req)
 	res.render('submit.ejs', {})
 }
 
 //renderizza alla pagina di login
 function home(req, res)
 {
-	console.log("get request to /")
+	util.trackRequest('/', req)
 	res.render("login.ejs", {})
 }
 
@@ -247,16 +236,13 @@ il numero di volte che lo ha utilizzato nelle partite già concluse
 async function deckUsed(user)
 {
 	var decks = await deck.getOwnersDeck(user)
-	console.log(decks)
 	var used = []
 
 	if(!decks)
 		return false
 	
 	for(i = 0; i < decks.length; i++)
-	{
 		used[i] = await battle.getByDeckUsed(decks[i].name, user)
-	}
 
 	return used
 }
@@ -266,15 +252,13 @@ async function dashboardPage(req, res)
 {
     if(!await util.isLogged(req, res))
         return false
-	console.log("get request to /dashboard from user --> " + req.user.username)
-	
+	//util.trackRequest('/dashboard', req)
 	//raccolgo tutti i dati necessari
 	var decks = await deck.getOwnersDeck(req.user.username)		
 	var games = await battle.getEndedGames(req.user.username)	 
 	var win = await battle.getWin(req.user.username)			
 	var lose = await battle.getLose(req.user.username)			 
 	var used = await deckUsed(req.user.username)				
-	
 	var obj = 
 	{
 		username: req.user.username,	
@@ -285,6 +269,7 @@ async function dashboardPage(req, res)
 		used: used 		//numero di volte in cui ha usato ogni deck 
 	}
     res.status(200).render('dashboard.ejs', obj)
+	return true
 }
 
 module.exports={getProfile, getUser, startSession, newAccount, submitPage, home, dashboardPage}

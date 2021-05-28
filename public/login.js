@@ -18,7 +18,7 @@ function login(username, password)
 	}
     $.ajax(
         {
-            url: 'login',
+			url: 'login',
             method: 'post',
             data:
             {

@@ -13,6 +13,7 @@ const c = db.createConnection(
 //in questo modo ottimizzo le prestazioni
 async function q(q, params)
 {
+	var debug = 0
 	//se la query va a buon fine la promessa viene mantenuta 
 	var p = new Promise(function(resolve, reject)
 	{
@@ -20,12 +21,14 @@ async function q(q, params)
 		{
 			if(err)
 			{
-				console.log("Query error --> " + err)
+				if(debug)
+					console.log("Query error --> " + err)
 				return reject(err)
 			}
 			if(rows.length || rows.affectedRows)
 			{
-				console.log("Query " + q + " OK!")
+				if(debug)
+					console.log("Query " + q + " OK!")
 				return resolve(rows)
 			}
 			else
@@ -41,7 +44,8 @@ async function q(q, params)
 	}
 	catch(err)
 	{	
-		console.log("DB error  or empty result " + err)
+		if(debug)
+			console.log("DB error  or empty result " + err)
 		return null
 	}
 }

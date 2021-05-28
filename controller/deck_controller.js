@@ -8,6 +8,7 @@ var battle = require('../model/battle_model.js')
 //ritorna tutti i deck
 async function getDecks(req, res)
 {
+	util.trackRequest('deck', req)
 	var decks = await deck.getAll()
 	if(!decks)
 	{
@@ -21,7 +22,8 @@ async function getDecks(req, res)
 //ritorna tutti i deck dell'utente
 async function getUserDecks(req, res)
 {
-    console.log(req.params.username)
+	util.trackRequest('/:username/deck', req)
+	var decks = await deck.getAll()
     var decks = await deck.getOwnersDeck(req.params.username)
     if(!decks)
     {
@@ -35,19 +37,19 @@ async function getUserDecks(req, res)
 //ritorna il deck di un utente passati come parametro
 async function getDeck(req, res)
 {
-	console.log(req.params.deck)
-	console.log(req.params.username)
+	util.trackRequest('/:username/deck/:deck', req)
 	var response = {cards: await cards.getFromDeck(req.params.deck, req.params.username)} 
-	console.log("response")
 	res.status(200).json(response)
 }
 
 //crea un nuovo mazzo e lo ritorna con l'utente che ne è proprietario
 async function newDeck(req, res)
 {
+	var response = {cards: await cards.getFromDeck(req.params.deck, req.params.username)} 
 	//se l'utente è loggato 
     if(! await util.isLogged(req, res))
         return false
+	util.trackRequest('/deck', req)
 	var rows = await alreadyHave(req.body.deck, req.user.username)
     //se l'utente ha già un mazzo con questo nome ritorno errore
 	if(rows)
@@ -77,17 +79,30 @@ async function alreadyHave(name, user)
 //renderizza alla pagina con le caratteristiche del deck
 async function showDeck(req, res)
 {
+	var response = {cards: await cards.getFromDeck(req.params.deck, req.params.username)} 
     if(!await util.isLogged(req, res))
         return false
+	util.trackRequest('/mazzo', req)
 	var deckName = req.query.deckName
 	var username = req.user.username
-	console.log("get request to /mazzo from --> " + username)
-    console.log(req.query.deckName)
 
+	//DA SISTEMARE, PROBABILMENTE NON ENTRA NEL PRIMO IF
 	//ottengo i dati relativi al deck da mostrare nella pagina
-	var rows = await cards.getFromDeck(deckName, username)
 	var size = await cards.getDeckLength(deckName, username)
-
+	if(req.params.query != null)
+	{	//ordine alfabetico
+		if(req.params.caso == 0)
+			var rows = await cards.getFromDeck(deckName, username)
+		else
+		{
+			res.status(400).send()
+			return false
+		}
+	}
+	else
+	{
+		var rows = await cards.getFromDeck(deckName, username)
+	}
 	var spells = await cards.getSizeByType(deckName, username, "spell card")
 	var traps = await cards.getSizeByType(deckName, username, "Trap Card")
 	var normalMonsters = await cards.getSizeByType(deckName, username, "normal monster")
@@ -129,8 +144,7 @@ async function modifyDeck(req, res)
 {
     if(!await util.isLogged(req, res))
         return false
-
-	console.log("put request to deck from --> " + req.user.username)
+	util.trackRequest('/deck', req)
 	switch(parseInt(req.body.type))
 	{
 		case 0:
@@ -165,6 +179,7 @@ async function modifyDeck(req, res)
 //ritorna true se la carta è stata inserica con successo altrimenti ritorna false
 async function addCard(req, res)
 {
+
 	var toInsert = req.body.card
 	var deck = req.body.deck
 	var username = req.user.username
@@ -178,14 +193,12 @@ async function addCard(req, res)
 		if(copies >= 3)
 		{
 			//numero di copie massimo raggiunto
-			console.log("numero di copie massimo raggiunto per --> " + toInsert.name)
 			return false
 		}
 		else
 		{
 			//posso inserire la carta facendo l'update del campo copies
 			var result = await cards.newCopy(toInsert.name, deck, username)
-			console.log("new copy of " + toInsert.name + " insert into " + deck)
 			return true
 		}
 	}
@@ -209,10 +222,7 @@ async function removeCard(req, res)
 	//controllo se la carta è presente nel mazzo
 	var rows = await cards.getCardFromDeck(toDelete.name, deck, username)
 	if(!rows)
-	{
-		console.log("this card is not in the deck, you cant remove it") 
 		return false
-	}
 	
 	//controllo se vi è più di una copia
 	var copies = rows[0].copies
@@ -232,6 +242,7 @@ async function deleteDeck(req, res)
 {	
     if(!await util.isLogged(req, res))
         return false
+	util.trackRequest('/deck', req)
 	var toDelete = req.body.deck
 	var username = req.user.username
 	
@@ -262,18 +273,22 @@ async function findCardByName(req, res)
 		res.status(401).send("invalid account")
 		return false;
 	}
+	util.trackRequest('/search', req)
 	//il .get ritorna una promessa
-	console.log(req.param("cardName"))
-	var question = "?name=" + req.param("cardName")
-	console.log(question)
+	let question
+	if(req.query.IDcard)
+		question = '?id=' + req.query.IDcard
+	else if(req.query.cardName)
+		question = "?name=" + req.query.cardName
+	else
+		return false
+
 	axios.get('https://db.ygoprodeck.com/api/v7/cardinfo.php' + question).then(function(response)
 	{
 		var response = response.data.data[0]
-		console.log(response)
 		res.status(200).send(response)
 	}).catch(function(error)
 	{
-		console.log(error)
 		res.status(401).send(error)
 	})
 }

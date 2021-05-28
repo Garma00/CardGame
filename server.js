@@ -3,6 +3,8 @@ var bodyParser = require('body-parser')
 const db = require('./model/db.js')
 var user_routes = require('./routes/user_routes.js')
 var user_controller = require('./controller/user_controller')
+var https = require('https')
+var fs = require('fs')
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 var deck_routes = require('./routes/deck_routes.js')
@@ -32,7 +34,12 @@ app.use(deck_routes)
 app.use(battle_routes)
 app.use(trade_routes)
 
-app.listen(port, function()
+//app.get('/', function(req, res){res.send('hello')})
+
+https.createServer({
+	key: fs.readFileSync('server.key'), 
+	cert: fs.readFileSync('server.cert')
+}, app).listen(port, function()
 {
 	console.log("App listening on --> " + port)
 	//appena viene aperto il servero ccorre connettersi al db
