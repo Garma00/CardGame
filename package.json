@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "CC0-1.0",
   "dependencies": {
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
